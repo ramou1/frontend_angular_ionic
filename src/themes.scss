@@ -1,8 +1,8 @@
 @forward '@nebular/theme/styles/theming';
 @use '@nebular/theme/styles/theming' as *;
-@use '@nebular/theme/styles/themes/corporate';
+@use '@nebular/theme/styles/themes/cosmic';
 
-// @use "theme/card";
+@use "theme/card";
 // @use "theme/dialog";
 // @use "theme/header";
 // @use "theme/form";
@@ -10,22 +10,18 @@
 @use "theme/typography";
 
 $nb-themes: nb-register-theme((
+  
+color-primary-100: #f7e8c4,
+color-primary-200: #f3d1a4,
+color-primary-300: #efb984,
+color-primary-400: #eeb46c,
+color-primary-500: #ffd599,
+color-primary-600: #f9c04c,
+color-primary-700: #f4a83d,
+color-primary-800: #f18d2c,
+color-primary-900: #d77a1e,
 
-  // add your variables here like:
-
-  color-primary-100: #8fbba9,
-  color-primary-200: #80cfaf,
-  color-primary-300: #48dba0,
-  color-primary-400: #24d48e,
-  color-primary-500: #00DA84,
-  color-primary-600: #04b76f,
-  color-primary-700: #01a966,
-  color-primary-800: #007546,
-  color-primary-900: #00462a,
-
-  font-family: 'Effra'
-
-), corporate, corporate);
+font-family: 'Effra'), cosmic, cosmic);
 
 * {
   font-family: 'Effra' !important;

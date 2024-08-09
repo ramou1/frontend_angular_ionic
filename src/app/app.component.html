@@ -1,5 +1,28 @@
 <nb-layout>
-  <nb-layout-header>Awesome Company</nb-layout-header>
-  <nb-layout-column class="colored-column-warning">Left column</nb-layout-column>
-  <nb-layout-column class="colored-column-danger">Right column</nb-layout-column>
+
+  <nb-layout-header *ngIf="activatedTab" fixed>
+
+    <span class="first-column">Olá admin, seja bem vindo.</span>
+
+    <button nbButton ghost size="large" class="second-column">
+      <nb-icon icon="power-outline"></nb-icon>
+    </button>
+
+  </nb-layout-header>
+
+  <nb-sidebar state="expanded" *ngIf="activatedTab">
+    <!-- <img class="logo" src="assets/images/logo.svg" alt=""> -->
+    <nb-menu [items]="menu"></nb-menu>
+  </nb-sidebar>
+
+  <nb-layout-column>
+    <router-outlet></router-outlet>
+  </nb-layout-column>
+
+  <nb-layout-footer fixed>
+    <span>
+      Desenvolvimento de apps mobile.
+    </span>
+  </nb-layout-footer>
+
 </nb-layout>
