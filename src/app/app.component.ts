@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NbLayoutModule, NbSidebarModule, NbSidebarService, NbThemeModule, NbThemeService } from '@nebular/theme';
+import { NbIconModule, NbLayoutModule, NbSidebarModule, NbSidebarService, NbThemeModule, NbThemeService } from '@nebular/theme';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +8,8 @@ import { NbLayoutModule, NbSidebarModule, NbSidebarService, NbThemeModule, NbThe
   imports: [
     RouterOutlet,
     NbLayoutModule,
-    NbSidebarModule
+    NbSidebarModule,
+    NbIconModule,
   ],
   providers: [NbSidebarService],
   templateUrl: './app.component.html',
