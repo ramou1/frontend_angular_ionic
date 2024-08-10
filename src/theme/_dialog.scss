@@ -1,5 +1,5 @@
 nb-card.confirm-dialog {
-    width: 28vw;
+    width: 30vw;
     text-align: center;
 
     nb-card-body {
@@ -8,7 +8,7 @@ nb-card.confirm-dialog {
 }
 
 nb-card.add-new-dialog {
-    width: 50vw;
+    max-width: 40vw;
 
     nb-card-header {
         font-size: 20px;

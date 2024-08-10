@@ -3,6 +3,7 @@ import { NavigationEnd, RouterOutlet } from '@angular/router';
 import { NbCardModule, NbIconModule, NbLayoutModule, NbMenuItem, NbMenuModule, NbSidebarModule, NbSidebarService, NbThemeModule, NbThemeService } from '@nebular/theme';
 import { BasePage } from '../services/base-page';
 import { CommonModule } from '@angular/common';
+import { NbEvaIconsModule } from '@nebular/eva-icons';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ import { CommonModule } from '@angular/common';
     NbLayoutModule,
     NbSidebarModule,
     NbIconModule,
+    NbEvaIconsModule,
     NbMenuModule,
     NbCardModule,
   ],

@@ -7,6 +7,8 @@ import { TaskModel } from '../../models/task-model';
 import { CommonModule } from '@angular/common';
 import { MSG_CONST } from '../../constants/message.const';
 import { MOCK_TASKS, MOCK_USERS } from '../../constants/mock.const';
+import { Observable, of } from 'rxjs';
+import { MockTaskService } from '../../../services/mock-task.service';
 
 @Component({
   selector: 'app-tasks',
@@ -21,18 +23,19 @@ export class TasksComponent extends BasePage implements OnInit {
 
   filteredTaskResponsibles: any[] = [];
   public taskResponsibles: any[] = [];
-  public tasks: any;
+  public tasks: TaskModel[] = [];
   public filteredTasks: any;
   public tasksForm!: FormGroup;
   public editing: boolean = false;
   public choosedTask: any;
   public loading: boolean = false;
   public p: number = 1;
+  public minDate: Date | undefined;
 
-  columns = ['Título', 'Descrição', 'Data de Expiração', 'Data de Registro', 'Status', 'Responsável', 'Ações'];
+  columns = ['Título', 'Descrição', 'Data de Registro', 'Data de Expiração', 'Status', 'Responsável', 'Ações'];
   importColumn = ['title', 'description', 'registerDate', 'expirationDate', 'status', 'responsible'];
 
-  constructor(public injector: Injector) {
+  constructor(public injector: Injector, public taskSrvc: MockTaskService) {
     super(injector);
   }
 
@@ -53,30 +56,22 @@ export class TasksComponent extends BasePage implements OnInit {
       responsibleId: [''],
       registerDate: null,
     });
+
+    this.minDate = new Date();
   }
 
-  public async getTasks(): Promise<void> {
-    try {
-      // const params: Params = {
-      //   orders: [
-      //     {
-      //       direction: 'asc',
-      //       fieldPath: 'title'
-      //     }
-      //   ],
-      // };
-      // const res = await this.tasksSrvc.getIngredients(params);
-      // this.tasks = res;
-      this.tasks = MOCK_TASKS;
-      this.filteredTasks = this.tasks;
-    } catch (e) {
-      console.error(e);
-    }
+  getTasks() {
+    this.taskSrvc.getTasks().subscribe({
+      next: (tasks: TaskModel[]) => {
+        this.tasks = tasks;
+        this.filteredTasks = tasks;
+      },
+      error: (err: any) => console.error(err),
+    });
   }
 
   public async getTaskResponsibles(): Promise<void> {
     try {
-      // this.taskResponsibles = await this.taskResponsiblesSrvc.load();
       this.taskResponsibles = MOCK_USERS;
     } catch (e) {
       console.error(e);
@@ -134,11 +129,11 @@ export class TasksComponent extends BasePage implements OnInit {
 
   async deleteTask(taskId: any) {
     try {
-      // await this.tasksSrvc.deleteIngredient(taskId);
-      // await this.getTasks();
-      await this.toastrSrvc.success(null, MSG_CONST.DELETED_INGREDIENT_OK, { icon: '' });
+      await this.taskSrvc.deleteTask(taskId).toPromise();
+      this.filteredTasks = this.filteredTasks.filter((task: TaskModel) => task.id !== taskId);
+      await this.toastrSrvc.success(null, MSG_CONST.DELETED_TASK_OK, { icon: '' });
     } catch (e) {
-      await this.toastrSrvc.danger(null, MSG_CONST.DELETED_INGREDIENT_ERROR, { icon: '' });
+      await this.toastrSrvc.danger(null, MSG_CONST.DELETED_TASK_ERROR, { icon: '' });
       console.error(e);
     }
   }
@@ -148,8 +143,8 @@ export class TasksComponent extends BasePage implements OnInit {
       const formData = this.tasksForm.value;
       formData.registerDate = new Date();
       formData.responsible = this.taskResponsibles.find((responsible: any) => responsible.id === formData.responsibleId);
+      await this.taskSrvc.addOrUpdateTask(formData).toPromise();
       console.log(formData);
-      // await this.tasksSrvc.addOrUpdateIngredients(formData);
       await this.toastrSrvc.success(null, MSG_CONST.SAVE_DATA_OK, { icon: '' });
       await this.getTasks();
       this.tasksForm.reset();

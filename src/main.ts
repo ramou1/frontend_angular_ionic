@@ -6,6 +6,7 @@ import { importProvidersFrom } from '@angular/core';
 import { routes } from './app/app.routes';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import 'eva-icons';
+import { NbDateFnsDateModule } from '@nebular/date-fns';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -15,6 +16,7 @@ bootstrapApplication(AppComponent, {
       BrowserAnimationsModule,
       NbThemeModule.forRoot({ name: 'cosmic' }),
       NbDatepickerModule.forRoot(),
+      NbDateFnsDateModule,
       NbDialogModule.forRoot(),
       NbIconModule,
       NbSidebarModule.forRoot(),

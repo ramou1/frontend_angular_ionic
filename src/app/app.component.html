@@ -1,28 +1,19 @@
 <nb-layout>
 
   <nb-layout-header *ngIf="activatedTab" fixed>
-
     <span class="first-column">Olá admin, seja bem vindo.</span>
-
-    <button nbButton ghost size="large" class="second-column">
-      <nb-icon icon="power-outline"></nb-icon>
-    </button>
-
   </nb-layout-header>
 
   <nb-sidebar state="expanded" *ngIf="activatedTab">
     <nb-menu [items]="menu"></nb-menu>
   </nb-sidebar>
-  
 
   <nb-layout-column>
     <router-outlet></router-outlet>
   </nb-layout-column>
 
   <nb-layout-footer fixed>
-    <span>
-      Desenvolvimento de apps mobile.
-    </span>
+    <span> Desenvolvimento de apps mobile. </span>
   </nb-layout-footer>
 
 </nb-layout>

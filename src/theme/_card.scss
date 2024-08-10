@@ -17,18 +17,19 @@ nb-card.two-columns {
             align-self: center;
             font-size: 28px;
             font-weight: 600;
-            color: var(--color-warning-500);
+            color: var(--color-warning-300);
         }
     }
 }
 
 nb-card-body {
     box-shadow: none;
+    overflow: scroll;
 
     #tasks-table,
     #users-table {
         border-radius: 20px;
-        width: 100%;
+        width: 1500px;
 
         tr {
             border-bottom: 2px solid var(--color-basic-200);
