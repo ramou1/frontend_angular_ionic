@@ -3,16 +3,22 @@ nb-card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 15px
     }
 
-    button {
+    button.add-button {
         text-transform: initial !important;
         font-weight: 400 !important;
-        // background: var(--color-primary-500);
+        font-size: 13px !important;
+        
+        nb-icon {
+            width: 15px !important;
+            margin-right: 4px !important;
+        }
     }
 
     .custom-search {
-        width: 60%;
+        width: 30%;
     }
 
     .custom-search input {
@@ -22,5 +28,10 @@ nb-card-header {
 
     .custom-search input::placeholder {
         font-size: 13px !important; 
+    }
+
+    .right-actions {
+        display: flex;
+        gap: 15px;
     }
 }

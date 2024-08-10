@@ -6,7 +6,7 @@
 @use "theme/dialog";
 @use "theme/header";
 @use "theme/form";
-// @use "theme/pagination";
+@use "theme/menu";
 @use "theme/typography";
 
 $nb-themes: nb-register-theme((font-family: 'Effra'), cosmic, cosmic);

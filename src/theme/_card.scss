@@ -1,35 +1,19 @@
-nb-card.two-columns {
-    width: 30%;
-    max-width: 450px;
-    display: inline-grid;
-    vertical-align: top;
-    margin: 15px;
-
-    nb-card-body {
-        justify-content: space-between !important;
-        display: flex;
-
-        nb-icon {
-            font-size: 25px;
-        }
-
-        span {
-            align-self: center;
-            font-size: 28px;
-            font-weight: 600;
-            color: var(--color-warning-300);
-        }
-    }
-}
-
 nb-card-body {
     box-shadow: none;
     overflow: scroll;
 
+    #tasks-table {
+        width: 1500px;
+    }
+
+    #users-table {
+        width: 100%;
+    //     width: 900px;
+    }
+
     #tasks-table,
     #users-table {
         border-radius: 20px;
-        width: 1500px;
 
         tr {
             border-bottom: 2px solid var(--color-basic-200);

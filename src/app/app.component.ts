@@ -37,7 +37,7 @@ export class AppComponent extends BasePage implements OnInit {
     },
     {
       title: 'Tarefas',
-      icon: 'clipboard-outline',
+      icon: 'calendar-outline',
       link: '/tasks',
       pathMatch: 'full',
     },
@@ -53,16 +53,5 @@ export class AppComponent extends BasePage implements OnInit {
     super(injector);
   }
 
-  ngOnInit() {
-    // configuração dos ícones
-    this.iconLibraries.registerFontPack('eva', { packClass: 'eva', iconClassPrefix: 'eva' });
-    this.iconLibraries.setDefaultPack('eva');
-
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationEnd) {
-        const url = event.urlAfterRedirects;
-        this.activatedTab = url === '/dashboard' || url === '/tasks' || url === '/users';
-      }
-    });
-  }
+  ngOnInit() { }
 }

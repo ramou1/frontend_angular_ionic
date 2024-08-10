@@ -1,1 +1,107 @@
-<p>users works!</p>
+<h1>Usuários</h1>
+
+<nb-card>
+    <nb-card-header>
+        <div class="flex-container">
+            <div class="custom-search">
+                <input type="text" nbInput fullWidth placeholder="Procurar usuários..." (input)="searchUsers($event)">
+            </div>
+
+            <div class="right-actions">
+                <nb-form-field>
+                    <nb-icon nbPrefix icon="options-2-outline"></nb-icon>
+                    <nb-select placeholder="Ordenação" [(ngModel)]="selectedSort" (ngModelChange)="sortUsers()">
+                        <nb-option [value]="0">Cadastros mais antigos</nb-option>
+                        <nb-option [value]="1">Cadastros mais recentes</nb-option>
+                    </nb-select>
+                </nb-form-field>
+
+                <button (click)="openUserDialog(addOrUpdateDialog)" nbButton status="primary" type="button"
+                    class="add-button">
+                    <nb-icon icon="plus-outline"></nb-icon>Novo Usuário
+                </button>
+            </div>
+        </div>
+    </nb-card-header>
+
+    <nb-card-body style="padding: 0 !important;">
+        <table id="users-table">
+            <tr class="users-table-title">
+                <th *ngFor="let column of columns">{{column}}</th>
+            </tr>
+            <tr *ngFor="let user of filteredUsers | paginate: { itemsPerPage: 20, currentPage: p }; index as i;"
+                class="users-table-data">
+                <td>{{user?.id}}</td>
+                <td>{{user?.name}}</td>
+                <td>{{user?.registerDate | date:'dd/MM/yy'}}</td>
+                <td>{{user?.email}}</td>
+                <td class="tags"><nb-tag [text]="getRoleName(user.role)"
+                        [status]="getStatusColor(user.role)"></nb-tag></td>
+                <td>
+                    <button nbButton (click)="openUserDialog(addOrUpdateDialog, user)" status="success" type="button"
+                        class="form-btn" ghost>
+                        <nb-icon icon="edit-outline"></nb-icon>
+                    </button>
+                    <button nbButton (click)="openUserDialog(deleteDialog)" status="danger" type="button"
+                        class="form-btn" ghost>
+                        <nb-icon icon="trash-outline"></nb-icon>
+                    </button>
+                    <ng-template #deleteDialog let-data let-ref="dialogRef">
+                        <nb-card class="confirm-dialog">
+                            <nb-card-header>Confirmação de Exclusão</nb-card-header>
+                            <nb-card-body>
+                                Confirma a exclusão do usuário "{{user?.name}}"? Essa ação é irreversível.
+                            </nb-card-body>
+                            <nb-card-footer>
+                                <button (click)="ref.close()" nbButton status="danger" type="button">
+                                    Cancelar
+                                </button>
+                                <button (click)="deleteUser(user?.id); ref.close()" nbButton status="success"
+                                    type="button">
+                                    Sim, excluir
+                                </button>
+                            </nb-card-footer>
+                        </nb-card>
+                    </ng-template>
+                </td>
+            </tr>
+        </table>
+
+        <ng-template #addOrUpdateDialog let-data let-ref="dialogRef">
+            <nb-card class="add-new-dialog">
+                <nb-card-header>{{editing ? 'Atualizar' : 'Adicionar'}} Usuário</nb-card-header>
+                <nb-card-body>
+                    <form [formGroup]="usersForm">
+                        <input type="text" nbInput fullWidth placeholder="Nome do Usuário" formControlName="name">
+
+                        <input type="email" nbInput fullWidth placeholder="E-mail" formControlName="email">
+
+                        <div class="row">
+                            <nb-select fullWidth placeholder="Gênero" formControlName="gender">
+                                <nb-option value="male">Masculino</nb-option>
+                                <nb-option value="female">Feminino</nb-option>
+                                <nb-option value="other">Prefiro não dizer</nb-option>
+                            </nb-select>
+
+                            <nb-select fullWidth placeholder="Nível" formControlName="role">
+                                <nb-option value="admin">Administrador</nb-option>
+                                <nb-option value="user">Usuário Comum</nb-option>
+                            </nb-select>
+                        </div>
+                    </form>
+                </nb-card-body>
+
+                <nb-card-footer>
+                    <button (click)="ref.close(); getUsers();" nbButton status="danger" type="button">
+                        Fechar
+                    </button>
+                    <button [disabled]="usersForm.invalid" (click)="addOrUpdateUser(); ref.close()" nbButton
+                        status="success" type="button"> {{editing ? 'Atualizar' : 'Adicionar'}}
+                    </button>
+                </nb-card-footer>
+            </nb-card>
+        </ng-template>
+    </nb-card-body>
+
+    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+</nb-card>

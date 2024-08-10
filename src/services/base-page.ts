@@ -3,6 +3,8 @@ import { Injectable, Injector } from "@angular/core";
 import { FormBuilder } from "@angular/forms";
 import { Router, ActivatedRoute } from "@angular/router";
 import { NbDialogService, NbIconLibraries, NbSidebarService, NbToastrService } from "@nebular/theme";
+import { MockTaskService } from "./mock-task.service";
+import { MockUserService } from "./mock-user.service";
 
 @Injectable({
     providedIn: 'root'
@@ -16,10 +18,9 @@ export abstract class BasePage {
     protected platform: Platform;
     protected router: Router;
     protected sidebarSrvc: NbSidebarService;
-    // protected storage: StorageService;
-    // protected tasksSrvc: TasksService;
+    protected taskSrvc: MockTaskService;
     protected toastrSrvc: NbToastrService;
-    // protected userSrvc: UserService;
+    protected userSrvc: MockUserService;
 
     constructor(injector: Injector) {
         this.activatedRoute = injector.get(ActivatedRoute);
@@ -29,9 +30,8 @@ export abstract class BasePage {
         this.platform = injector.get(Platform);
         this.router = injector.get(Router);
         this.sidebarSrvc = injector.get(NbSidebarService);
-        // this.storage = injector.get(StorageService);
-        // this.tasksSrvc = injector.get(TasksService);
+        this.taskSrvc = injector.get(MockTaskService);
         this.toastrSrvc = injector.get(NbToastrService);
-        // this.userSrvc = injector.get(UserService);
+        this.userSrvc = injector.get(MockUserService);
     }
 }

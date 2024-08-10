@@ -1,15 +1,42 @@
-<h1>Tasks</h1>
+<h1>Tarefas</h1>
 
 <nb-card>
     <nb-card-header>
         <div class="flex-container">
             <div class="custom-search">
-                <input type="text" nbInput fullWidth placeholder="Search tasks..." (input)="filterTasks($event)">
+                <input type="text" nbInput fullWidth placeholder="Procurar tarefas..." (input)="searchTasks($event)">
             </div>
 
-            <button (click)="openTaskDialog(addOrUpdateDialog)" nbButton status="primary" type="button">
-                + Nova Tarefa
-            </button>
+            <div class="right-actions">
+                <nb-form-field>
+                    <nb-icon nbPrefix icon="funnel-outline"></nb-icon>
+                    <nb-select placeholder="Filtrar Usuários" [(ngModel)]="selectedResponsible" (ngModelChange)="filterResponsibles()">
+                        <nb-option [value]="null">Todos os usuários</nb-option>
+                        <nb-option *ngFor="let responsible of taskResponsibles" [value]="responsible.id">{{responsible.name}}</nb-option>
+                    </nb-select>
+                </nb-form-field>
+                <nb-form-field>
+                    <nb-icon nbPrefix icon="funnel-outline"></nb-icon>
+                    <nb-select placeholder="Filtrar Status" [(ngModel)]="selectedStatusFilter" (ngModelChange)="filterTasks()">
+                        <nb-option [value]="null">Todas as tarefas</nb-option>
+                        <nb-option [value]="0">Tarefas pendentes</nb-option>
+                        <nb-option [value]="1">Tarefas em andamento</nb-option>
+                        <nb-option [value]="2">Tarefas concluídas</nb-option>
+                    </nb-select>
+                </nb-form-field>
+
+                <nb-form-field>
+                    <nb-icon nbPrefix icon="options-2-outline"></nb-icon>
+                    <nb-select placeholder="Ordenação" [(ngModel)]="selectedSort" (ngModelChange)="sortTasks()">
+                        <nb-option [value]="0">Data de Vencimento: Crescente</nb-option>
+                        <nb-option [value]="1">Data de Vencimento: Decrescente</nb-option>
+                    </nb-select>
+                </nb-form-field>
+
+                <button (click)="openTaskDialog(addOrUpdateDialog)" nbButton status="primary" type="button" class="add-task-button">
+                    <nb-icon icon="plus-outline"></nb-icon>Nova Tarefa
+                </button>
+            </div>
         </div>
     </nb-card-header>
 
@@ -19,14 +46,14 @@
                 <th *ngFor="let column of columns">{{column}}</th>
             </tr>
             <tr *ngFor="let task of filteredTasks | paginate: { itemsPerPage: 20, currentPage: p }; index as i;"
-                class="tasks-table-data" (click)="openTaskDialog(addOrUpdateDialog, task)">
+                class="tasks-table-data">
                 <td>{{task?.title}}</td>
                 <td>{{task?.description}}</td>
                 <td>{{task?.registerDate | date:'dd/MM'}}</td>
                 <td>{{task?.expirationDate | date:'dd/MM'}}</td>
                 <td class="tags"><nb-tag [text]="getStatusName(task.status)"
                         [status]="getStatusColor(task.status)"></nb-tag></td>
-                <td>{{task?.responsible.name}}</td>
+                <td>{{task?.responsible?.name}}</td>
                 <td>
                     <button nbButton (click)="openTaskDialog(addOrUpdateDialog, task)" status="success" type="button"
                         class="form-btn" ghost>
@@ -64,11 +91,12 @@
                     <form [formGroup]="tasksForm">
                         <input type="text" nbInput fullWidth placeholder="Título da Tarefa" formControlName="title">
 
-                        <textarea nbInput fullWidth rows="5" placeholder="Descrição da Tarefa"
+                        <textarea nbInput fullWidth rows="7" placeholder="Descrição da Tarefa"
                             formControlName="description"></textarea>
 
                         <div class="row">
-                            <input nbInput [nbDatepicker]="datepicker" placeholder="Data de Expiração" formControlName="expirationDate">
+                            <input nbInput [nbDatepicker]="datepicker" placeholder="Data de Vencimento"
+                                formControlName="expirationDate">
                             <nb-datepicker #datepicker [min]="minDate" format="dd/MM/yyyy"></nb-datepicker>
 
                             <nb-select fullWidth placeholder="Status de Tarefa" formControlName="status">

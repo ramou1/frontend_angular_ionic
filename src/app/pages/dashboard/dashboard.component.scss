@@ -1,0 +1,26 @@
+div.two-columns {
+    display: flex;
+    gap: 15px;
+
+    nb-card {
+        width: 40%;
+        max-width: 450px;
+        margin-bottom: 0;
+
+        nb-card-body {
+            justify-content: space-between !important;
+            display: flex;
+
+            nb-icon {
+                font-size: 25px;
+            }
+
+            span {
+                align-self: center;
+                font-size: 28px;
+                font-weight: 600;
+                color: var(--color-warning-300);
+            }
+        }
+    }
+}

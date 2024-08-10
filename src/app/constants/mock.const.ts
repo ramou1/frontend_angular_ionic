@@ -5,32 +5,44 @@ export const MOCK_USERS: UserModel[] = [
   {
     id: '101',
     name: 'Alice Johnson',
-    email: 'alice@gmail.com'
+    email: 'alice@gmail.com',
+    role: 'user',
+    registerDate: new Date('2024-08-01'),
   },
   {
     id: '102',
     name: 'Bob Smith',
-    email: 'bob.smith@example.com'
+    email: 'bob.smith@example.com',
+    role: 'admin',
+    registerDate: new Date('2024-08-02'),
   },
   {
     id: '103',
     name: 'Carol White',
     email: 'carol.white@example.com',
+    role: 'admin',
+    registerDate: new Date('2024-07-12'),
   },
   {
     id: '104',
     name: 'Emma Davis',
     email: 'emma.davis@example.com',
+    role: 'user',
+    registerDate: new Date('2024-08-03'),
   },
   {
     id: '105',
     name: 'Grace Wilson',
     email: 'grace.wilson@gmail.com',
+    role: 'user',
+    registerDate: new Date('2024-08-01'),
   },
   {
     id: '106',
     name: 'Henry Clark',
     email: 'henry.clark@example.com',
+    role: 'user',
+    registerDate: new Date('2024-07-23'),
   }
 ];
 
