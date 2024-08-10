@@ -1,6 +1,6 @@
 nb-card {
-    max-width: 75vw;
-    max-height: 85vh;
+    max-width: 85vw;
+    // max-height: 85vh;
 }
 
 ul.group-list {
@@ -16,7 +16,7 @@ ul.group-list {
         background: #e4e7ed;
     }
 
-    li.group-selected {
+    li.responsible-selected {
         background: #e4e7ed;
     }
 }

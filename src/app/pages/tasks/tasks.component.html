@@ -1,20 +1,15 @@
+<h1>Tasks</h1>
+
 <nb-card>
     <nb-card-header>
-        <div class="first-line">
-            <span class="document-name">
-                Tarefas ({{tasks?.length || 0}})
-            </span>
-
-            <div class="right-buttons">
-                <button (click)="openTaskDialog(addOrUpdateDialog)" nbButton status="success" type="button"
-                    class="form-btn">
-                    Nova Tarefa
-                </button>
+        <div class="flex-container">
+            <div class="custom-search">
+                <input type="text" nbInput fullWidth placeholder="Search tasks..." (input)="filterTasks($event)">
             </div>
-        </div>
 
-        <div class="custom-search">
-            <input type="text" nbInput fullWidth placeholder="Pesquisar tarefas..." (input)="filterTasks($event)">
+            <button (click)="openTaskDialog(addOrUpdateDialog)" nbButton status="primary" type="button">
+                + Nova Tarefa
+            </button>
         </div>
     </nb-card-header>
 
@@ -27,11 +22,10 @@
                 class="tasks-table-data">
                 <td>{{task?.title}}</td>
                 <td>{{task?.description}}</td>
-                <td>{{task?.expirationDate}}</td>
-                <td>{{task?.registerDate | date:'dd/MM/yy'}}</td>
-                <!-- <td class="tags"><nb-tag *ngFor="let showcase of task.showIn"
-                        [text]="showcase === 'recipes' ? 'Receitas' : 'Cardápio'" status="info"></nb-tag></td> -->
-                <td class="tags"><nb-tag [text]="getStatusName(task.status)" status="primary"></nb-tag></td>
+                <td>{{task?.registerDate | date:'dd/MM'}}</td>
+                <td>{{task?.expirationDate | date:'dd/MM'}}</td>
+                <td class="tags"><nb-tag [text]="getStatusName(task.status)"
+                        [status]="getStatusColor(task.status)"></nb-tag></td>
                 <td>{{task?.responsible.name}}</td>
                 <td>
                     <button nbButton (click)="openTaskDialog(addOrUpdateDialog, task)" status="success" type="button"
@@ -64,51 +58,30 @@
         </table>
 
         <ng-template #addOrUpdateDialog let-data let-ref="dialogRef">
-            <nb-card>
+            <nb-card class="add-new-dialog">
                 <nb-card-header>{{editing ? 'Atualizar' : 'Adicionar'}} Tarefa</nb-card-header>
                 <nb-card-body>
                     <form [formGroup]="tasksForm">
+                        <input type="text" nbInput fullWidth placeholder="Título da Tarefa" formControlName="title">
+
+                        <textarea nbInput fullWidth rows="5" placeholder="Descrição da Tarefa"
+                            formControlName="description"></textarea>
+
                         <div class="row">
-                            <input type="text" nbInput fullWidth placeholder="Título da Tarefa" formControlName="title">
-                            <nb-select fullWidth placeholder="Tipo de Tarefa" formControlName="type">
-                                <nb-option *ngFor="let cat of categories"
-                                    [value]="cat.shortTitle">{{cat.title}}</nb-option>
+                            <input nbInput [nbDatepicker]="datepicker" placeholder="Data de Expiração" formControlName="expirationDate">
+                            <nb-datepicker #datepicker format="dd/MM/yyyy"></nb-datepicker>
+
+                            <nb-select fullWidth placeholder="Status de Tarefa" formControlName="status">
+                                <nb-option [value]="0">Pendente</nb-option>
+                                <nb-option [value]="1">Em andamento</nb-option>
+                                <nb-option [value]="2">Concluída</nb-option>
                             </nb-select>
                         </div>
 
-                        <div class="row">
-                            <input type="number" nbInput fullWidth placeholder="Qtd. Porção (g)"
-                                formControlName="totalPortion">
-                            <input type="number" nbInput fullWidth placeholder="Valor energético (kcal)"
-                                formControlName="energeticValue">
-                        </div>
-
-                        <div class="row">
-                            <input type="number" nbInput fullWidth placeholder="Carboidratos totais (g)"
-                                formControlName="totalCarbohydrates">
-                            <input type="number" nbInput fullWidth placeholder="Açúcares totais (g)"
-                                formControlName="totalSugars">
-                            <input type="number" nbInput fullWidth placeholder="Açúcares adicionados (g)"
-                                formControlName="addedSugars">
-                        </div>
-
-                        <div>
-                            <!-- <h4>Selecione o responsável:</h4> -->
-                            <input type="text" nbInput fullWidth placeholder="Selecionar o responsável..."
-                                (input)="filterResponsibleList($event)">
-                            <ul class="group-list">
-                                <li *ngFor="let group of filteredTaskResponsibles"
-                                    (click)="onTaskResponsibleChoose(group)"
-                                    [ngClass]="group?.isClicked ? 'group-selected' : ''">
-                                    {{ group.title }}
-                                </li>
-                            </ul>
-                            <nb-tag-list (tagRemove)="onResponsibleRemove($event)">
-                                <nb-tag *ngFor="let group of choosedTask.groups" [text]="getResponsibleTitle(group)"
-                                    status="primary" [removable]="true"></nb-tag>
-                            </nb-tag-list>
-                        </div>
-
+                        <nb-select fullWidth placeholder="Responsável" formControlName="responsibleId">
+                            <nb-option *ngFor="let responsible of taskResponsibles"
+                                [value]="responsible.id">{{responsible.name}}</nb-option>
+                        </nb-select>
                     </form>
                 </nb-card-body>
 
@@ -123,7 +96,7 @@
                 </nb-card-footer>
             </nb-card>
         </ng-template>
-
     </nb-card-body>
+
     <pagination-controls (pageChange)="p = $event"></pagination-controls>
 </nb-card>

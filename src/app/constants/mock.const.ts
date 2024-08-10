@@ -10,7 +10,27 @@ export const MOCK_USERS: UserModel[] = [
   {
     id: '102',
     name: 'Bob Smith',
-    email: 'bob@gmail.com'
+    email: 'bob.smith@example.com'
+  },
+  {
+    id: '103',
+    name: 'Carol White',
+    email: 'carol.white@example.com',
+  },
+  {
+    id: '104',
+    name: 'Emma Davis',
+    email: 'emma.davis@example.com',
+  },
+  {
+    id: '105',
+    name: 'Grace Wilson',
+    email: 'grace.wilson@gmail.com',
+  },
+  {
+    id: '106',
+    name: 'Henry Clark',
+    email: 'henry.clark@example.com',
   }
 ];
 
@@ -21,11 +41,12 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Design and implement a new landing page for the product.',
     expirationDate: new Date('2024-08-15'),
     registerDate: new Date('2024-08-01'),
-    status: 'In Progress',
+    status: 1,
+    responsibleId: '101',
     responsible: {
       id: '101',
       name: 'Alice Johnson',
-      email: 'alice.johnson@example.com',
+      email: 'alice@gmail.com',
     },
   },
   {
@@ -34,7 +55,8 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Perform a full backup of the production database.',
     expirationDate: new Date('2024-08-10'),
     registerDate: new Date('2024-07-29'),
-    status: 'Completed',
+    status: 2,
+    responsibleId: '102',
     responsible: {
       id: '102',
       name: 'Bob Smith',
@@ -47,7 +69,8 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Update the API documentation with the latest endpoints.',
     expirationDate: new Date('2024-08-20'),
     registerDate: new Date('2024-08-02'),
-    status: 'Not Started',
+    status: 0,
+    responsibleId: '103',
     responsible: {
       id: '103',
       name: 'Carol White',
@@ -60,7 +83,8 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Run performance tests on the new application release.',
     expirationDate: new Date('2024-08-18'),
     registerDate: new Date('2024-08-03'),
-    status: 'In Progress',
+    status: 1,
+    responsibleId: '104',
     responsible: {
       id: '104',
       name: 'David Brown',
@@ -73,11 +97,12 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Review the pull requests submitted by the development team.',
     expirationDate: new Date('2024-08-12'),
     registerDate: new Date('2024-08-04'),
-    status: 'Completed',
+    status: 2,
+    responsibleId: '101',
     responsible: {
-      id: '105',
-      name: 'Emma Davis',
-      email: 'emma.davis@example.com',
+      id: '101',
+      name: 'Alice Johnson',
+      email: 'alice@gmail.com',
     },
   },
   {
@@ -86,7 +111,8 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Conduct a security audit of the web application.',
     expirationDate: new Date('2024-08-25'),
     registerDate: new Date('2024-08-05'),
-    status: 'Not Started',
+    status: 0,
+    responsibleId: '106',
     responsible: {
       id: '106',
       name: 'Frank Miller',
@@ -99,11 +125,12 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Analyze user feedback from the last survey.',
     expirationDate: new Date('2024-08-22'),
     registerDate: new Date('2024-08-06'),
-    status: 'In Progress',
+    status: 1,
+    responsibleId: '104',
     responsible: {
-      id: '107',
-      name: 'Grace Wilson',
-      email: 'grace.wilson@example.com',
+      id: '104',
+      name: 'Emma Davis',
+      email: 'emma.davis@example.com',
     },
   },
   {
@@ -112,12 +139,13 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Review and refine the UI/UX design for the mobile app.',
     expirationDate: new Date('2024-08-30'),
     registerDate: new Date('2024-08-07'),
-    status: 'Not Started',
+    status: 0,
+    responsibleId: '106',
     responsible: {
-      id: '108',
+      id: '106',
       name: 'Henry Clark',
       email: 'henry.clark@example.com',
-    },
+    }
   },
   {
     id: '9',
@@ -125,11 +153,12 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Perform routine maintenance on the application servers.',
     expirationDate: new Date('2024-08-28'),
     registerDate: new Date('2024-08-08'),
-    status: 'In Progress',
+    status: 1,
+    responsibleId: '102',
     responsible: {
-      id: '109',
-      name: 'Isabella Martinez',
-      email: 'isabella.martinez@example.com',
+      id: '102',
+      name: 'Bob Smith',
+      email: 'bob.smith@example.com',
     },
   },
   {
@@ -138,11 +167,12 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Launch the new marketing campaign for the upcoming product.',
     expirationDate: new Date('2024-09-01'),
     registerDate: new Date('2024-08-09'),
-    status: 'Not Started',
+    status: 0,
+    responsibleId: '105',
     responsible: {
-      id: '110',
-      name: 'Jack Lee',
-      email: 'jack.lee@example.com',
-    },
+      id: '106',
+      name: 'Henry Clark',
+      email: 'henry.clark@example.com',
+    }
   }
 ];

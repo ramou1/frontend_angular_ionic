@@ -1,19 +1,17 @@
 import { Component, Injector, OnInit, TemplateRef } from '@angular/core';
 import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NbCardModule, NbCheckboxModule, NbDialogModule, NbDialogService, NbIconModule, NbListModule, NbSelectModule, NbTagModule } from '@nebular/theme';
+import { NbButton, NbButtonModule, NbCardModule, NbCheckboxModule, NbDatepickerModule, NbDialogModule, NbDialogService, NbIconModule, NbInputModule, NbListModule, NbMenuModule, NbSelectModule, NbSidebarModule, NbTagModule } from '@nebular/theme';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { BasePage } from '../../../services/base-page';
 import { TaskModel } from '../../models/task-model';
 import { CommonModule } from '@angular/common';
 import { MSG_CONST } from '../../constants/message.const';
 import { MOCK_TASKS, MOCK_USERS } from '../../constants/mock.const';
-import { TASK_CATEGORIES } from '../../constants/data.const';
-import { UserModel } from '../../models/user-model';
 
 @Component({
   selector: 'app-tasks',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NbDialogModule, NbCardModule, NbIconModule, NbCheckboxModule, NbListModule, NbTagModule, NbSelectModule, NgxPaginationModule],
+  imports: [CommonModule, ReactiveFormsModule, NbInputModule, NbDatepickerModule, NbDialogModule, NbCardModule, NbButtonModule, NbIconModule, NbCheckboxModule, NbListModule, NbMenuModule, NbTagModule, NbSelectModule, NbSidebarModule, NgxPaginationModule],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.scss',
   providers: [NbDialogService],
@@ -26,15 +24,13 @@ export class TasksComponent extends BasePage implements OnInit {
   public tasks: any;
   public filteredTasks: any;
   public tasksForm!: FormGroup;
-  public importedForm!: FormGroup;
   public editing: boolean = false;
   public choosedTask: any;
   public loading: boolean = false;
   public p: number = 1;
-  public categories = TASK_CATEGORIES;
 
   columns = ['Título', 'Descrição', 'Data de Expiração', 'Data de Registro', 'Status', 'Responsável', 'Ações'];
-  importColumn = ['title', 'description', 'expirationDate', 'registerDate', 'status', 'responsible'];
+  importColumn = ['title', 'description', 'registerDate', 'expirationDate', 'status', 'responsible'];
 
   constructor(public injector: Injector) {
     super(injector);
@@ -43,6 +39,7 @@ export class TasksComponent extends BasePage implements OnInit {
   async ngOnInit() {
     this.createForms();
     await this.getTasks();
+    await this.getTaskResponsibles();
   }
 
   createForms() {
@@ -52,8 +49,9 @@ export class TasksComponent extends BasePage implements OnInit {
       description: ['', Validators.required],
       expirationDate: ['', Validators.required],
       status: ['', Validators.required],
-      responsible: ['', Validators.required],
-      registerDate: new Date(),
+      responsible: [''],
+      responsibleId: [''],
+      registerDate: null,
     });
   }
 
@@ -71,7 +69,6 @@ export class TasksComponent extends BasePage implements OnInit {
       // this.tasks = res;
       this.tasks = MOCK_TASKS;
       this.filteredTasks = this.tasks;
-      console.log(this.tasks);
     } catch (e) {
       console.error(e);
     }
@@ -103,53 +100,27 @@ export class TasksComponent extends BasePage implements OnInit {
     }
   }
 
-  public filterResponsibleList(evt?: any): void {
-    const searchTerm = evt.target.value;
-
-    if (searchTerm === '') {
-      this.filteredTaskResponsibles = [];
-    }
-    else {
-      this.filteredTaskResponsibles = this.taskResponsibles.filter((responsible: any) =>
-        responsible.name.toLowerCase().includes(searchTerm.toLowerCase())).slice(0, 4);
+  getStatusName(status: number): string {
+    switch (status) {
+      case 0: return 'Pendente';
+      case 1: return 'Em andamento';
+      case 2: return 'Concluída';
+      default: return 'Não iniciado'
     }
   }
 
-  onTaskResponsibleChoose(user: UserModel): void {
-    // user.isClicked = true;
-    this.tasksForm.get('responsible')?.setValue([user]);
-  }
-
-  onResponsibleRemove(task: any): void {
-    this.toastrSrvc.danger(null, MSG_CONST.NOT_AVAILABLE, { icon: '' });
-  }
-
-  getResponsibleTitle(responsible: UserModel): any {
-    // switch (group) {
-    //   case 'protein': return 'Proteína';
-    //   case 'carbo': return 'Carboidrato';
-    //   case 'fruit': return 'Fruta';
-    //   case 'fat': return 'Gordura';
-    //   case 'salad': return 'Salada';
-    //   default: return 'Outros'
-    // }
-
-    const title = this.taskResponsibles.filter((user: any) => user.id === responsible.id)[0]?.title;
-    return title || '';
-  }
-
-  getStatusName(type: string): string {
-    switch (type) {
-      case 'teste01': return 'Teste 1';
-      case 'teste02': return 'Teste 2';;
-      default: return 'Outros'
+  getStatusColor(status: number): string {
+    switch (status) {
+      case 0: return 'warning';
+      case 1: return 'info';
+      case 2: return 'success';
+      default: return 'basic'
     }
   }
 
   openTaskDialog(dialog: TemplateRef<any>, task?: TaskModel) {
     this.editing = false;
     this.choosedTask = null;
-    this.filteredTaskResponsibles = [];
     this.dialogSrvc.open(dialog);
     this.tasksForm.reset();
 
@@ -175,6 +146,9 @@ export class TasksComponent extends BasePage implements OnInit {
   async addOrUpdateTask() {
     try {
       const formData = this.tasksForm.value;
+      formData.registerDate = new Date();
+      formData.responsible = this.taskResponsibles.find((responsible: any) => responsible.id === formData.responsibleId);
+      console.log(formData);
       // await this.tasksSrvc.addOrUpdateIngredients(formData);
       await this.toastrSrvc.success(null, MSG_CONST.SAVE_DATA_OK, { icon: '' });
       await this.getTasks();

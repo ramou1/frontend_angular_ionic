@@ -44,10 +44,6 @@ export class AppComponent extends BasePage implements OnInit {
       icon: 'person-add-outline',
       link: '/users',
       pathMatch: 'full',
-      // badge: {
-      //   text: '30',
-      //   status: 'primary',
-      // },
     },
   ];
 
@@ -62,16 +58,8 @@ export class AppComponent extends BasePage implements OnInit {
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        let child = this.activatedRoute.firstChild;
-        if (!child) {
-          return;
-        }
-        while (child.firstChild) {
-          child = child.firstChild;
-        }
-        if (child.snapshot.data) {
-          this.activatedTab = child.snapshot.data['tab'];
-        }
+        const url = event.urlAfterRedirects;
+        this.activatedTab = url === '/dashboard' || url === '/tasks' || url === '/users';
       }
     });
   }

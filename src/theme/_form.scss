@@ -1,0 +1,28 @@
+//formatando os elementos do formulário
+form {
+    display: grid;
+    gap: 15px;
+
+    .row {
+        display: flex;
+        gap: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 4px;
+        font-weight: 600;
+        font-size: 13px;
+    }
+}
+
+//espaçamento entre o botão de fechar e adicionar
+nb-card-footer {
+    justify-content: space-between;
+    display: flex;
+}
+
+nb-tag-list {
+    margin-top: 15px;
+    margin-bottom: 10px;
+}

@@ -11,9 +11,9 @@
   </nb-layout-header>
 
   <nb-sidebar state="expanded" *ngIf="activatedTab">
-    <!-- <img class="logo" src="assets/images/logo.svg" alt=""> -->
     <nb-menu [items]="menu"></nb-menu>
   </nb-sidebar>
+  
 
   <nb-layout-column>
     <router-outlet></router-outlet>

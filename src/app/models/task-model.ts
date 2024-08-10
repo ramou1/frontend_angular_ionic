@@ -6,6 +6,7 @@ export interface TaskModel {
     description?: string;
     expirationDate?: Date;
     registerDate?: Date;
-    status?: string;
+    status?: number;
     responsible?: UserModel;
+    responsibleId?: string;
 }

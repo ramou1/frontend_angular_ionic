@@ -3,25 +3,13 @@
 @use '@nebular/theme/styles/themes/cosmic';
 
 @use "theme/card";
-// @use "theme/dialog";
-// @use "theme/header";
-// @use "theme/form";
+@use "theme/dialog";
+@use "theme/header";
+@use "theme/form";
 // @use "theme/pagination";
 @use "theme/typography";
 
-$nb-themes: nb-register-theme((
-  
-color-primary-100: #f7e8c4,
-color-primary-200: #f3d1a4,
-color-primary-300: #efb984,
-color-primary-400: #eeb46c,
-color-primary-500: #ffd599,
-color-primary-600: #f9c04c,
-color-primary-700: #f4a83d,
-color-primary-800: #f18d2c,
-color-primary-900: #d77a1e,
-
-font-family: 'Effra'), cosmic, cosmic);
+$nb-themes: nb-register-theme((font-family: 'Effra'), cosmic, cosmic);
 
 * {
   font-family: 'Effra' !important;

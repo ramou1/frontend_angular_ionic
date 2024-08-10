@@ -1,0 +1,26 @@
+nb-card-header {
+    .flex-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    button {
+        text-transform: initial !important;
+        font-weight: 400 !important;
+        // background: var(--color-primary-500);
+    }
+
+    .custom-search {
+        width: 60%;
+    }
+
+    .custom-search input {
+        font-size: 13px !important;
+        font-weight: 400 !important;
+    }
+
+    .custom-search input::placeholder {
+        font-size: 13px !important; 
+    }
+}
