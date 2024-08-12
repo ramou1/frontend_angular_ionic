@@ -53,6 +53,7 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Design and implement a new landing page for the product.',
     expirationDate: new Date('2024-08-15'),
     registerDate: new Date('2024-08-01'),
+    progress: 50,
     status: 1,
     responsibleId: '101',
     responsible: {
@@ -67,6 +68,7 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Perform a full backup of the production database.',
     expirationDate: new Date('2024-08-10'),
     registerDate: new Date('2024-07-29'),
+    progress: 100,
     status: 2,
     responsibleId: '102',
     responsible: {
@@ -81,6 +83,7 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Update the API documentation with the latest endpoints.',
     expirationDate: new Date('2024-08-20'),
     registerDate: new Date('2024-08-02'),
+    progress: 25,
     status: 0,
     responsibleId: '103',
     responsible: {
@@ -95,6 +98,7 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Run performance tests on the new application release.',
     expirationDate: new Date('2024-08-18'),
     registerDate: new Date('2024-08-03'),
+    progress: 75,
     status: 1,
     responsibleId: '104',
     responsible: {
@@ -109,6 +113,7 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Review the pull requests submitted by the development team.',
     expirationDate: new Date('2024-08-12'),
     registerDate: new Date('2024-08-04'),
+    progress: 100,
     status: 2,
     responsibleId: '101',
     responsible: {
@@ -123,6 +128,7 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Conduct a security audit of the web application.',
     expirationDate: new Date('2024-08-25'),
     registerDate: new Date('2024-08-05'),
+    progress: 50,
     status: 0,
     responsibleId: '106',
     responsible: {
@@ -137,6 +143,7 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Analyze user feedback from the last survey.',
     expirationDate: new Date('2024-08-22'),
     registerDate: new Date('2024-08-06'),
+    progress: 75,
     status: 1,
     responsibleId: '104',
     responsible: {
@@ -151,6 +158,7 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Review and refine the UI/UX design for the mobile app.',
     expirationDate: new Date('2024-08-30'),
     registerDate: new Date('2024-08-07'),
+    progress: 20,
     status: 0,
     responsibleId: '106',
     responsible: {
@@ -165,6 +173,7 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Perform routine maintenance on the application servers.',
     expirationDate: new Date('2024-08-28'),
     registerDate: new Date('2024-08-08'),
+    progress: 35,
     status: 1,
     responsibleId: '102',
     responsible: {
@@ -179,6 +188,7 @@ export const MOCK_TASKS: TaskModel[] = [
     description: 'Launch the new marketing campaign for the upcoming product.',
     expirationDate: new Date('2024-09-01'),
     registerDate: new Date('2024-08-09'),
+    progress: 50,
     status: 0,
     responsibleId: '105',
     responsible: {

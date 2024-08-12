@@ -4,20 +4,23 @@
     <nb-card-header>
         <div class="flex-container">
             <div class="custom-search">
-                <input type="text" nbInput fullWidth placeholder="Procurar tarefas..." (input)="searchTasks($event)">
+                <input type="text" nbInput fullWidth placeholder="Pesquisar tarefas..." (input)="searchTasks($event)">
             </div>
 
             <div class="right-actions">
                 <nb-form-field>
                     <nb-icon nbPrefix icon="funnel-outline"></nb-icon>
-                    <nb-select placeholder="Filtrar Usuários" [(ngModel)]="selectedResponsible" (ngModelChange)="filterResponsibles()">
+                    <nb-select placeholder="Filtrar Usuários" [(ngModel)]="selectedResponsible"
+                        (ngModelChange)="filterResponsibles()">
                         <nb-option [value]="null">Todos os usuários</nb-option>
-                        <nb-option *ngFor="let responsible of taskResponsibles" [value]="responsible.id">{{responsible.name}}</nb-option>
+                        <nb-option *ngFor="let responsible of taskResponsibles"
+                            [value]="responsible.id">{{responsible.name}}</nb-option>
                     </nb-select>
                 </nb-form-field>
                 <nb-form-field>
                     <nb-icon nbPrefix icon="funnel-outline"></nb-icon>
-                    <nb-select placeholder="Filtrar Status" [(ngModel)]="selectedStatusFilter" (ngModelChange)="filterTasks()">
+                    <nb-select placeholder="Filtrar Status" [(ngModel)]="selectedStatusFilter"
+                        (ngModelChange)="filterTasks()">
                         <nb-option [value]="null">Todas as tarefas</nb-option>
                         <nb-option [value]="0">Tarefas pendentes</nb-option>
                         <nb-option [value]="1">Tarefas em andamento</nb-option>
@@ -33,7 +36,8 @@
                     </nb-select>
                 </nb-form-field>
 
-                <button (click)="openTaskDialog(addOrUpdateDialog)" nbButton status="primary" type="button" class="add-task-button">
+                <button (click)="openTaskDialog(addOrUpdateDialog)" nbButton status="primary" type="button"
+                    class="add-task-button">
                     <nb-icon icon="plus-outline"></nb-icon>Nova Tarefa
                 </button>
             </div>
@@ -51,6 +55,7 @@
                 <td>{{task?.description}}</td>
                 <td>{{task?.registerDate | date:'dd/MM'}}</td>
                 <td>{{task?.expirationDate | date:'dd/MM'}}</td>
+                <td><nb-progress-bar [value]="task?.progress" size="tiny" status="primary"></nb-progress-bar></td>
                 <td class="tags"><nb-tag [text]="getStatusName(task.status)"
                         [status]="getStatusColor(task.status)"></nb-tag></td>
                 <td>{{task?.responsible?.name}}</td>

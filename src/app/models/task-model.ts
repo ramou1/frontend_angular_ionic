@@ -7,6 +7,7 @@ export interface TaskModel {
     expirationDate?: Date;
     registerDate?: Date;
     status?: number;
+    progress?: number;
     responsible?: UserModel;
     responsibleId?: string;
 }

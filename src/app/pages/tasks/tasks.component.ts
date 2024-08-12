@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit, TemplateRef } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NbButton, NbButtonModule, NbCardModule, NbCheckboxModule, NbDatepickerModule, NbDialogModule, NbDialogService, NbFormFieldModule, NbIconModule, NbInputModule, NbListModule, NbMenuModule, NbSelectModule, NbSidebarModule, NbTagModule } from '@nebular/theme';
+import { NbButton, NbButtonModule, NbCardModule, NbCheckboxModule, NbDatepickerModule, NbDialogModule, NbDialogService, NbFormFieldModule, NbIconModule, NbInputModule, NbListModule, NbMenuModule, NbProgressBarModule, NbSelectModule, NbSidebarModule, NbTagModule } from '@nebular/theme';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { BasePage } from '../../../services/base-page';
 import { TaskModel } from '../../models/task-model';
@@ -12,7 +12,7 @@ import { MockTaskService } from '../../../services/mock-task.service';
 @Component({
   selector: 'app-tasks',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, NbFormFieldModule, NbInputModule, NbDatepickerModule, NbDialogModule, NbCardModule, NbButtonModule, NbIconModule, NbCheckboxModule, NbListModule, NbMenuModule, NbTagModule, NbSelectModule, NbSidebarModule, NgxPaginationModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, NbFormFieldModule, NbInputModule, NbDatepickerModule, NbDialogModule, NbCardModule, NbButtonModule, NbIconModule, NbCheckboxModule, NbListModule, NbMenuModule, NbProgressBarModule, NbTagModule, NbSelectModule, NbSidebarModule, NgxPaginationModule],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.scss',
   providers: [NbDialogService],
@@ -35,8 +35,8 @@ export class TasksComponent extends BasePage implements OnInit {
   public minDate: Date | undefined;
   public sort: string[] = ['', ''];
 
-  columns = ['Título', 'Descrição', 'Data de Registro', 'Data de Vencimento', 'Status', 'Responsável', 'Ações'];
-  importColumn = ['title', 'description', 'registerDate', 'expirationDate', 'status', 'responsible'];
+  columns = ['Título', 'Descrição', 'Data de Registro', 'Data de Vencimento', 'Progresso', 'Status', 'Responsável', 'Ações'];
+  importColumn = ['title', 'description', 'registerDate', 'expirationDate', 'progress', 'status', 'responsible'];
 
   constructor(public injector: Injector) {
     super(injector);
@@ -54,6 +54,7 @@ export class TasksComponent extends BasePage implements OnInit {
       title: ['', Validators.required],
       description: ['', Validators.required],
       expirationDate: ['', Validators.required],
+      progress: [0, Validators.required],
       status: ['', Validators.required],
       responsible: [''],
       responsibleId: [''],
