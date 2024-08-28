@@ -3,8 +3,7 @@
 
 O projeto TaskTrack foi gerado com a [Angular CLI](https://github.com/angular/angular-cli) versão 18.1.4 e utiliza o Nebular 14.0.0 para estilização e componentes de UI. 
 
-![Painel TaskTrack](https://imgur.com/a/6MBAjdR)
-![Painel TaskTrack](https://i.imgur.com/a/6MBAjdR.png)
+![Painel TaskTrack](https://i.imgur.com/WGzp3IK.png)
 
 ## O Projeto
 É um sistema web onde o usuário pode criar, editar, excluir e listar usuários e tarefas. Na hora da criação da tarefa será possível delegá-la a algum usuário previamente cadastrado no sistema. Foram criados serviços de tarefas e de usuários usando dados mockados, assim permitindo a simulação das operações de CRUD como uma interação de BD real. Filtros e ordenações também estão presentes nas páginas.
