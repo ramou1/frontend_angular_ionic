@@ -1,5 +1,5 @@
 
-# Teste Frontend Angular Ionic - Ramon Oliveira
+# TaskTrack: Projeto Web Angular
 
 O projeto TaskTrack foi gerado com a [Angular CLI](https://github.com/angular/angular-cli) versão 18.1.4 e utiliza o Nebular 14.0.0 para estilização e componentes de UI. 
 
@@ -11,10 +11,6 @@ O projeto TaskTrack foi gerado com a [Angular CLI](https://github.com/angular/an
 ## Servidor de Desenvolvimento
 
 Execute `ng serve` para iniciar um servidor de desenvolvimento. Navegue até `http://localhost:4200/`. A aplicação será recarregada automaticamente se você alterar qualquer um dos arquivos de origem.
-
-## Build
-
-Execute `ng build` para compilar o projeto. Os arquivos de build serão armazenados na pasta `dist/`.
 
 ## Executando Testes Unitários
 

@@ -7,6 +7,7 @@ export const MOCK_USERS: UserModel[] = [
     name: 'Alice Johnson',
     email: 'alice@gmail.com',
     role: 'user',
+    gender: 'female',
     registerDate: new Date('2024-08-01'),
   },
   {
@@ -14,6 +15,7 @@ export const MOCK_USERS: UserModel[] = [
     name: 'Bob Smith',
     email: 'bob.smith@example.com',
     role: 'admin',
+    gender: 'male',
     registerDate: new Date('2024-08-02'),
   },
   {
@@ -21,6 +23,7 @@ export const MOCK_USERS: UserModel[] = [
     name: 'Carol White',
     email: 'carol.white@example.com',
     role: 'admin',
+    gender: 'female',
     registerDate: new Date('2024-07-12'),
   },
   {
@@ -28,6 +31,7 @@ export const MOCK_USERS: UserModel[] = [
     name: 'Emma Davis',
     email: 'emma.davis@example.com',
     role: 'user',
+    gender: 'female',
     registerDate: new Date('2024-08-03'),
   },
   {
@@ -35,6 +39,7 @@ export const MOCK_USERS: UserModel[] = [
     name: 'Grace Wilson',
     email: 'grace.wilson@gmail.com',
     role: 'user',
+    gender: 'female',
     registerDate: new Date('2024-08-01'),
   },
   {
@@ -42,6 +47,7 @@ export const MOCK_USERS: UserModel[] = [
     name: 'Henry Clark',
     email: 'henry.clark@example.com',
     role: 'user',
+    gender: 'male',
     registerDate: new Date('2024-07-23'),
   }
 ];
