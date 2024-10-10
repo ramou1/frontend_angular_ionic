@@ -1,7 +1,13 @@
 <nb-layout>
 
   <nb-layout-header *ngIf="activatedTab" fixed>
-    <img src="assets/images/logo_task.png" alt="Logo" class="logo_task">
+    <div class="">
+      <img src="assets/images/logo_task.png" alt="Logo" class="logo_task" (click)="goToHome()">
+
+      <!-- [picture]="user?.avatar || 'assets/images/default-avatar.png'" -->
+      <nb-user [name]="user?.name || 'User'" [nbContextMenu]="contextMenuItems"
+        nbContextMenuTag="my-context-menu"></nb-user>
+    </div>
   </nb-layout-header>
 
   <nb-sidebar state="expanded" *ngIf="activatedTab">
@@ -17,3 +23,5 @@
   </nb-layout-footer>
 
 </nb-layout>
+
+<button [nbContextMenu]="contextMenuItems" [nbContextMenuPlacement]="position"></button>
