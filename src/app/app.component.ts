@@ -1,9 +1,27 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { NbCardModule, NbIconModule, NbLayoutModule, NbMenuItem, NbMenuModule, NbSidebarModule, NbSidebarService, NbContextMenuModule, NbUserModule, NbActionsModule, NbPosition } from '@nebular/theme';
-import { BasePage } from '../services/base-page';
 import { CommonModule } from '@angular/common';
+import { Component, inject, Injector, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterOutlet } from '@angular/router';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
+import {
+  NbButtonModule,
+  NbCardModule,
+  NbContextMenuModule,
+  NbIconModule,
+  NbLayoutModule,
+  NbMenuItem,
+  NbMenuModule,
+  NbMenuService,
+  NbSidebarModule,
+  NbTagModule,
+  NbUserModule,
+} from '@nebular/theme';
+import { filter } from 'rxjs';
+import { AuthService } from '../services/auth.service';
+import { BasePage } from '../services/base-page';
+import { MSG_CONST } from './constants/message.const';
+import { APP_ROUTES } from './constants/routes.const';
+import { getRoleName } from './constants/task-status';
 
 @Component({
   selector: 'app-root',
@@ -11,67 +29,77 @@ import { NbEvaIconsModule } from '@nebular/eva-icons';
   imports: [
     CommonModule,
     RouterOutlet,
-    NbActionsModule,
     NbLayoutModule,
     NbSidebarModule,
     NbIconModule,
     NbEvaIconsModule,
     NbMenuModule,
     NbCardModule,
+    NbButtonModule,
     NbContextMenuModule,
-    NbUserModule,  
+    NbUserModule,
+    NbTagModule,
   ],
-  providers: [NbSidebarService],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-
 export class AppComponent extends BasePage implements OnInit {
-  title = 'TaskTrack Angular';
-  public activatedTab = true;
-  
-  // Simulação de dados do usuário
-  public user = {
-    name: 'Ramon Oliveira',
-    avatar: 'assets/images/user-avatar.jpg',
-  };
+  title = 'TaskTrack';
+  readonly auth = inject(AuthService);
+  private readonly menuService = inject(NbMenuService);
 
-  // Itens do menu de contexto
-  public contextMenuItems = [
-    { title: 'Profile', icon: 'person-outline', link: '/profile' },
-    { title: 'Logout', icon: 'log-out-outline', link: '/logout' },
+  @ViewChild('profileDialog') profileDialog?: TemplateRef<unknown>;
+
+  readonly contextMenuItems = [
+    { title: 'Meu perfil', icon: 'person-outline', data: { action: 'profile' } },
+    { title: 'Sair', icon: 'log-out-outline', data: { action: 'logout' } },
   ];
 
-  public position = NbPosition.RIGHT;
-
-  public menu: NbMenuItem[] = [
+  readonly menu: NbMenuItem[] = [
     {
       title: 'Dashboard',
       icon: 'home-outline',
-      link: '/dashboard',
-      pathMatch: 'full',
-    },
-    {
-      title: 'Tarefas',
-      icon: 'calendar-outline',
-      link: '/tasks',
-      pathMatch: 'full',
+      link: `/${APP_ROUTES.DASHBOARD}`,
+      pathMatch: 'prefix',
     },
     {
       title: 'Usuários',
-      icon: 'person-add-outline',
-      link: '/users',
+      icon: 'people-outline',
+      link: `/${APP_ROUTES.USERS}`,
       pathMatch: 'full',
     },
   ];
 
   constructor(public injector: Injector) {
     super(injector);
+
+    this.menuService.onItemClick()
+      .pipe(
+        filter(({ tag }) => tag === 'user-context-menu'),
+        takeUntilDestroyed(),
+      )
+      .subscribe(({ item }) => {
+        if (item.data?.['action'] === 'logout') {
+          this.logout();
+        }
+
+        if (item.data?.['action'] === 'profile' && this.profileDialog) {
+          this.dialogSrvc.open(this.profileDialog);
+        }
+      });
   }
 
-  ngOnInit() { }
+  ngOnInit(): void {}
 
-  goToHome() {
-    this.router.navigate(['/dashboard']);
+  getRoleName = getRoleName;
+
+  goToHome(): void {
+    this.router.navigate(['/', APP_ROUTES.DASHBOARD]);
+  }
+
+  logout(): void {
+    this.auth.logout();
+    this.toastrSrvc.success(MSG_CONST.LOGOUT_OK, 'Até logo');
+    this.router.navigate(['/', APP_ROUTES.LOGIN]);
   }
 }

@@ -1,29 +1,73 @@
-<h2>Olá admin!</h2>
+<section class="dashboard">
+  <header class="welcome">
+    <div>
+      <h1>Olá, {{ firstName() }}!</h1>
+      <p>Aqui está o resumo das tarefas da equipe.</p>
+    </div>
+    <span class="today">{{ today | date:'EEEE, d \'de\' MMMM' }}</span>
+  </header>
 
-<div class="two-columns">
-    <nb-card>
-        <nb-card-header>
-            <span class="document-name">
-                Total de Usuários
-            </span>
-        </nb-card-header>
-
-        <nb-card-body>
-            <nb-icon icon="person-outline"></nb-icon>
-            <span>50</span>
-        </nb-card-body>
+  <div class="kpi-grid">
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <nb-icon icon="people-outline"></nb-icon>
+        <div>
+          <span class="label">Usuários</span>
+          <strong>{{ usersCount() }}</strong>
+        </div>
+      </nb-card-body>
     </nb-card>
 
-    <nb-card>
-        <nb-card-header>
-            <span class="document-name">
-                Qtd. de Tarefas
-            </span>
-        </nb-card-header>
-
-        <nb-card-body>
-            <nb-icon icon="shopping-bag-outline"></nb-icon>
-            <span>20</span>
-        </nb-card-body>
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <nb-icon icon="checkmark-square-2-outline"></nb-icon>
+        <div>
+          <span class="label">Tarefas</span>
+          <strong>{{ tasksCount() }}</strong>
+        </div>
+      </nb-card-body>
     </nb-card>
-</div>
+
+    <nb-card class="kpi-card warning">
+      <nb-card-body>
+        <nb-icon icon="clock-outline"></nb-icon>
+        <div>
+          <span class="label">Pendentes</span>
+          <strong>{{ pendingCount() }}</strong>
+        </div>
+      </nb-card-body>
+    </nb-card>
+
+    <nb-card class="kpi-card info">
+      <nb-card-body>
+        <nb-icon icon="activity-outline"></nb-icon>
+        <div>
+          <span class="label">Em andamento</span>
+          <strong>{{ inProgressCount() }}</strong>
+        </div>
+      </nb-card-body>
+    </nb-card>
+
+    <nb-card class="kpi-card success">
+      <nb-card-body>
+        <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+        <div>
+          <span class="label">Concluídas</span>
+          <strong>{{ doneCount() }}</strong>
+        </div>
+      </nb-card-body>
+    </nb-card>
+
+    <nb-card class="kpi-card danger">
+      <nb-card-body>
+        <nb-icon icon="alert-triangle-outline"></nb-icon>
+        <div>
+          <span class="label">Atrasadas</span>
+          <strong>{{ overdueCount() }}</strong>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <app-tasks></app-tasks>
+</section>

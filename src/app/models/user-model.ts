@@ -1,9 +1,10 @@
 export interface UserModel {
-    id?: string;
-    name?: string;
-    email?: any;
-    gender?: string;
-    phone?: any;
-    registerDate?: Date;
-    role?: string;
+  id?: string;
+  name?: string;
+  email?: string;
+  gender?: string;
+  phone?: string;
+  registerDate?: Date;
+  role?: 'admin' | 'user' | string;
+  password?: string;
 }

@@ -27,10 +27,16 @@ div.divisor {
 }
 
 nb-layout-header nav {
-  justify-content: center !important;
+  justify-content: space-between !important;
 
   img.logo_task {
     width: 140px;
     cursor: pointer;
   }
+}
+
+pagination-controls {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0 4px;
 }

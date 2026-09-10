@@ -1,0 +1,92 @@
+.login-page {
+  width: min(980px, 100%);
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.login-hero {
+  padding: 12px 8px;
+
+  .logo {
+    width: 160px;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-size: 32px !important;
+    line-height: 1.25;
+    margin-bottom: 12px !important;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.8;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+}
+
+.login-card {
+  margin: 0;
+
+  nb-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    h2 {
+      margin: 0;
+    }
+
+    span {
+      font-size: 13px;
+      font-weight: 400;
+      opacity: 0.75;
+    }
+  }
+
+  form {
+    display: grid;
+    gap: 14px;
+  }
+
+  .error {
+    margin: 0;
+    color: var(--color-danger-400);
+    font-size: 13px;
+  }
+}
+
+.demo-box {
+  margin-top: 18px;
+  display: grid;
+  gap: 6px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  strong {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.7;
+  }
+
+  button {
+    justify-content: flex-start;
+    text-transform: none !important;
+    font-weight: 400 !important;
+  }
+}
+
+@media (max-width: 860px) {
+  .login-page {
+    grid-template-columns: 1fr;
+    padding: 12px 0 24px;
+  }
+
+  .login-hero h1 {
+    font-size: 26px !important;
+  }
+}

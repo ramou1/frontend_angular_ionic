@@ -1,151 +1,171 @@
 import { CommonModule } from '@angular/common';
-import { Component, Injector, OnInit, TemplateRef } from '@angular/core';
+import { Component, effect, Injector, OnInit, TemplateRef } from '@angular/core';
 import { FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NbFormFieldModule, NbInputModule, NbDatepickerModule, NbDialogModule, NbCardModule, NbButtonModule, NbIconModule, NbCheckboxModule, NbListModule, NbMenuModule, NbTagModule, NbSelectModule, NbSidebarModule } from '@nebular/theme';
+import {
+  NbButtonModule,
+  NbCardModule,
+  NbDialogModule,
+  NbFormFieldModule,
+  NbIconModule,
+  NbInputModule,
+  NbSelectModule,
+  NbTagModule,
+} from '@nebular/theme';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { firstValueFrom } from 'rxjs';
 import { BasePage } from '../../../services/base-page';
 import { MSG_CONST } from '../../constants/message.const';
+import { getRoleColor, getRoleName, normalizeText } from '../../constants/task-status';
 import { UserModel } from '../../models/user-model';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, NbFormFieldModule, NbInputModule, NbDatepickerModule, NbDialogModule, NbCardModule, NbButtonModule, NbIconModule, NbCheckboxModule, NbListModule, NbMenuModule, NbTagModule, NbSelectModule, NbSidebarModule, NgxPaginationModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    NbFormFieldModule,
+    NbInputModule,
+    NbDialogModule,
+    NbCardModule,
+    NbButtonModule,
+    NbIconModule,
+    NbTagModule,
+    NbSelectModule,
+    NgxPaginationModule,
+  ],
   templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
+  styleUrl: './users.component.scss',
 })
 export class UsersComponent extends BasePage implements OnInit {
-
-  selectedSort: any = null;
-  filteredUserResponsibles: any[] = [];
-  public users: UserModel[] = [];
-  public filteredUsers: any;
-  public usersForm!: FormGroup;
-  public editing: boolean = false;
-  public choosedUser: any;
-  public loading: boolean = false;
-  public p: number = 1;
-  public minDate: Date | undefined;
-  public sort: string[] = ['', ''];
-
-  columns = ['ID', 'Nome', 'Data de Cadastro', 'E-mail', 'Gênero', 'Nível', 'Ações'];
-  importColumn = ['id', 'name', 'registerDate', 'email', 'gender', 'role'];
+  selectedSort: number | null = null;
+  searchTerm = '';
+  filteredUsers: UserModel[] = [];
+  usersForm!: FormGroup;
+  editing = false;
+  choosedUser: UserModel | null = null;
+  p = 1;
 
   constructor(public injector: Injector) {
     super(injector);
+
+    effect(() => {
+      this.userSrvc.users();
+      this.applyFilters();
+    });
   }
 
-  async ngOnInit() {
+  ngOnInit(): void {
     this.createForms();
-    await this.getUsers();
+    this.applyFilters();
   }
 
-  createForms() {
+  createForms(): void {
     this.usersForm = this.fb.group({
-      id: [],
+      id: [''],
       name: ['', Validators.required],
-      email: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
       gender: ['', Validators.required],
       role: ['', Validators.required],
-      registerDate: null,
-    });
-
-    this.minDate = new Date();
-  }
-
-  getUsers() {
-    this.userSrvc.getUsers().subscribe({
-      next: (users: UserModel[]) => {
-        this.users = users;
-        this.filteredUsers = users;
-      },
-      error: (err: any) => console.error(err),
+      registerDate: [null],
     });
   }
 
-  // método de pesquisa das usuários
-  public searchUsers(evt: any): void {
-    const removeAccents = (str: string) => {
-      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    };
+  searchUsers(event: Event): void {
+    this.searchTerm = (event.target as HTMLInputElement).value;
+    this.p = 1;
+    this.applyFilters();
+  }
 
-    const searchTerm = removeAccents(evt.target.value);
+  applyFilters(): void {
+    let list = [...this.userSrvc.users()];
 
-    if (searchTerm === '') {
-      this.filteredUsers = this.users;
-    } else {
-      this.filteredUsers = this.users.filter((data: any) => {
-        const titleWithoutAccents = removeAccents(data.name.toLowerCase());
-        return titleWithoutAccents.indexOf(searchTerm.toLowerCase()) > -1;
-      });
+    if (this.searchTerm.trim()) {
+      const term = normalizeText(this.searchTerm);
+      list = list.filter((user) => normalizeText(user.name || '').includes(term) || normalizeText(user.email || '').includes(term));
     }
-  }
 
-  // método de ordenação das usuários
-  public sortUsers(): void {
     if (this.selectedSort === 0) {
-      // ordenar por Cadastro Crescente
-      this.filteredUsers.sort((a: any, b: any) => new Date(a.registerDate).getTime() - new Date(b.registerDate).getTime());
+      list.sort((a, b) => new Date(a.registerDate || 0).getTime() - new Date(b.registerDate || 0).getTime());
     } else if (this.selectedSort === 1) {
-      // ordenar por Cadastro Decrescente
-      this.filteredUsers.sort((a: any, b: any) => new Date(b.registerDate).getTime() - new Date(a.registerDate).getTime());
+      list.sort((a, b) => new Date(b.registerDate || 0).getTime() - new Date(a.registerDate || 0).getTime());
+    }
+
+    this.filteredUsers = list;
+  }
+
+  getRoleName = getRoleName;
+  getRoleColor = getRoleColor;
+
+  getGenderName(gender?: string): string {
+    switch (gender) {
+      case 'female':
+        return 'Feminino';
+      case 'male':
+        return 'Masculino';
+      default:
+        return 'Não informado';
     }
   }
 
-  // tradução do nível do usuário
-  getRoleName(role: string): string {
-    switch (role) {
-      case 'admin': return 'Administrador';
-      case 'user': return 'Usuário';
-      default: return 'Desconhecido';
-    }
-  }
-
-  getStatusColor(role: string): string {
-    switch (role) {
-      case 'admin': return 'info';
-      case 'user': return 'success';
-      default: return 'basic'
-    }
-  }
-
-  // método de abertura do modal de usuários
-  openUserDialog(dialog: TemplateRef<any>, user?: UserModel) {
-    this.editing = false;
-    this.choosedUser = null;
+  openUserView(dialog: TemplateRef<unknown>, user: UserModel): void {
+    this.choosedUser = user;
     this.dialogSrvc.open(dialog);
+  }
+
+  openUserDialog(dialog: TemplateRef<unknown>, user?: UserModel | null): void {
+    this.editing = !!user;
+    this.choosedUser = user || null;
     this.usersForm.reset();
 
     if (user) {
-      this.editing = true;
-      this.choosedUser = user;
       this.usersForm.patchValue(user);
     }
+
+    this.dialogSrvc.open(dialog);
   }
 
-  async deleteUser(userId: any) {
+  openDeleteDialog(dialog: TemplateRef<unknown>, user: UserModel): void {
+    this.choosedUser = user;
+    this.dialogSrvc.open(dialog);
+  }
+
+  async deleteUser(): Promise<void> {
+    if (!this.choosedUser?.id) {
+      return;
+    }
+
     try {
-      await this.userSrvc.deleteUser(userId).toPromise();
-      this.filteredUsers = this.filteredUsers.filter((user: UserModel) => user.id !== userId);
-      await this.toastrSrvc.success(null, MSG_CONST.DELETED_USER_OK, { icon: '' });
-    } catch (e) {
-      await this.toastrSrvc.danger(null, MSG_CONST.DELETED_USER_ERROR, { icon: '' });
-      console.error(e);
+      await firstValueFrom(this.userSrvc.deleteUser(this.choosedUser.id));
+      this.toastrSrvc.success(MSG_CONST.DELETED_USER_OK, 'Pronto');
+      this.choosedUser = null;
+    } catch (error) {
+      this.toastrSrvc.danger(MSG_CONST.DELETED_USER_ERROR, 'Erro');
+      console.error(error);
     }
   }
 
-  // método de adição ou atualização de usuários
-  async addOrUpdateUser() {
+  async addOrUpdateUser(): Promise<void> {
+    if (this.usersForm.invalid) {
+      this.usersForm.markAllAsTouched();
+      return;
+    }
+
     try {
-      const formData = this.usersForm.value;
-      formData.registerDate = new Date();
-      await this.userSrvc.addOrUpdateUser(formData).toPromise();
-      await this.toastrSrvc.success(null, MSG_CONST.SAVE_DATA_OK, { icon: '' });
-      await this.getUsers();
+      const formData = this.usersForm.getRawValue() as UserModel;
+      if (this.editing) {
+        formData.registerDate = this.choosedUser?.registerDate;
+        formData.password = this.choosedUser?.password;
+      } else {
+        formData.password = 'user123';
+      }
+      await firstValueFrom(this.userSrvc.addOrUpdateUser(formData));
+      this.toastrSrvc.success(MSG_CONST.SAVE_DATA_OK, 'Pronto');
       this.usersForm.reset();
-    } catch (e) {
-      await this.toastrSrvc.danger(null, MSG_CONST.SAVE_DATA_ERROR, { icon: '' });
-      console.error(e);
+    } catch (error) {
+      this.toastrSrvc.danger(MSG_CONST.SAVE_DATA_ERROR, 'Erro');
+      console.error(error);
     }
   }
 }

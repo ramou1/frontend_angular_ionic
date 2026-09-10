@@ -1,22 +1,128 @@
-nb-card {
-    max-width: 85vw;
-    // max-height: 85vh;
+.tasks-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-ul.group-list {
-    list-style: none;
-    padding: 0;
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+
+  h2 {
+    margin: 0 0 4px;
+  }
+
+  p {
     margin: 0;
+    opacity: 0.7;
+    font-size: 13px;
+  }
+}
 
-    li {
-        padding: 8px 5px;
-    }
+.task-list {
+  display: grid;
+  gap: 12px;
+}
 
-    li:hover {
-        background: #e4e7ed;
-    }
+.task-item {
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--color-primary-transparent-100);
+  cursor: pointer;
+  display: grid;
+  gap: 12px;
 
-    li.responsible-selected {
-        background: #e4e7ed;
-    }
+  &:hover {
+    background: var(--color-primary-transparent-200);
+  }
+
+  h3 {
+    margin: 0 0 4px;
+    font-size: 16px !important;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.75;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.task-item__header,
+.task-item__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.task-item__tags,
+.task-item__actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.task-item__footer {
+  align-items: center;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.empty-state {
+  padding: 28px 12px;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.task-view-dialog {
+  width: min(560px, 92vw);
+
+  .description {
+    margin-top: 0;
+    line-height: 1.5;
+  }
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 16px;
+
+  span {
+    display: block;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+}
+
+.footer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 720px) {
+  .panel-heading,
+  .task-item__header,
+  .task-item__footer {
+    flex-direction: column;
+  }
 }

@@ -1,14 +1,18 @@
-nb-card.confirm-dialog {
-    width: 30vw;
+nb-card.confirm-dialog,
+nb-card.profile-dialog,
+nb-card.task-view-dialog,
+nb-card.user-view-dialog {
+    width: min(480px, 92vw);
     text-align: center;
 
     nb-card-body {
         padding: 16px !important;
+        text-align: left;
     }
 }
 
 nb-card.add-new-dialog {
-    max-width: 40vw;
+    width: min(560px, 92vw);
 
     nb-card-header {
         font-size: 20px;

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { MOCK_USERS } from '../app/constants/mock.const';
 import { UserModel } from '../app/models/user-model';
@@ -7,25 +7,36 @@ import { UserModel } from '../app/models/user-model';
   providedIn: 'root',
 })
 export class MockUserService {
+  private readonly usersState = signal<UserModel[]>(MOCK_USERS.map((user) => ({ ...user })));
+  readonly users = this.usersState.asReadonly();
+
   getUsers(): Observable<UserModel[]> {
-    return of(MOCK_USERS);
+    return of(this.usersState());
   }
 
-  addOrUpdateUser(user: UserModel): Observable<void> {
-    const index = MOCK_USERS.findIndex(u => u.id === user.id);
-    if (index !== -1) {
-      MOCK_USERS[index] = user; // atualizar o usuário existente
-    } else {
-      MOCK_USERS.push(user); // adicionar um novo usuário
-    }
-    return of(); // simula uma operação bem-sucedida
+  addOrUpdateUser(user: UserModel): Observable<UserModel> {
+    const payload: UserModel = {
+      ...user,
+      id: user.id || Date.now().toString(),
+      registerDate: user.registerDate || new Date(),
+    };
+
+    this.usersState.update((list) => {
+      const index = list.findIndex((item) => item.id === payload.id);
+      if (index === -1) {
+        return [payload, ...list];
+      }
+
+      const next = [...list];
+      next[index] = payload;
+      return next;
+    });
+
+    return of(payload);
   }
 
-  deleteUser(userId: any): Observable<void> {
-    const index = MOCK_USERS.findIndex(u => u.id === userId);
-    if (index !== -1) {
-      MOCK_USERS.splice(index, 1); // remove o usuário
-    }
-    return of(); // simula uma operação bem-sucedida
+  deleteUser(userId: string): Observable<void> {
+    this.usersState.update((list) => list.filter((user) => user.id !== userId));
+    return of(undefined);
   }
 }

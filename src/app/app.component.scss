@@ -1,11 +1,35 @@
-nb-layout-header {
-    div {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
 
-        //   .logo {
-        //     margin-right: auto;
-        //   }
-    }
+.brand {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+nb-layout-header {
+  .logo_task {
+    width: 140px;
+  }
+}
+
+.profile-dialog {
+  width: min(420px, 92vw);
+
+  p {
+    margin: 0 0 10px;
+  }
+}
+
+:host ::ng-deep nb-layout.auth-layout .layout-container nb-layout-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -1,135 +1,191 @@
-<h1>Tarefas</h1>
+<section class="tasks-panel">
+  <div class="panel-heading">
+    <div>
+      <h2>Lista de tarefas</h2>
+      <p>Clique em uma tarefa para ver os detalhes.</p>
+    </div>
+    <button (click)="openTaskDialog(formDialog)" nbButton status="primary" type="button">
+      <nb-icon icon="plus-outline"></nb-icon>
+      Nova tarefa
+    </button>
+  </div>
 
-<nb-card>
+  <nb-card>
     <nb-card-header>
-        <div class="flex-container">
-            <div class="custom-search">
-                <input type="text" nbInput fullWidth placeholder="Pesquisar tarefas..." (input)="searchTasks($event)">
-            </div>
-
-            <div class="right-actions">
-                <nb-form-field>
-                    <nb-icon nbPrefix icon="funnel-outline"></nb-icon>
-                    <nb-select placeholder="Filtrar Usuários" [(ngModel)]="selectedResponsible"
-                        (ngModelChange)="filterResponsibles()">
-                        <nb-option [value]="null">Todos os usuários</nb-option>
-                        <nb-option *ngFor="let responsible of taskResponsibles"
-                            [value]="responsible.id">{{responsible.name}}</nb-option>
-                    </nb-select>
-                </nb-form-field>
-                <nb-form-field>
-                    <nb-icon nbPrefix icon="funnel-outline"></nb-icon>
-                    <nb-select placeholder="Filtrar Status" [(ngModel)]="selectedStatusFilter"
-                        (ngModelChange)="filterTasks()">
-                        <nb-option [value]="null">Todas as tarefas</nb-option>
-                        <nb-option [value]="0">Tarefas pendentes</nb-option>
-                        <nb-option [value]="1">Tarefas em andamento</nb-option>
-                        <nb-option [value]="2">Tarefas concluídas</nb-option>
-                    </nb-select>
-                </nb-form-field>
-
-                <nb-form-field>
-                    <nb-icon nbPrefix icon="options-2-outline"></nb-icon>
-                    <nb-select placeholder="Ordenação" [(ngModel)]="selectedSort" (ngModelChange)="sortTasks()">
-                        <nb-option [value]="0">Data de Vencimento: Crescente</nb-option>
-                        <nb-option [value]="1">Data de Vencimento: Decrescente</nb-option>
-                    </nb-select>
-                </nb-form-field>
-
-                <button (click)="openTaskDialog(addOrUpdateDialog)" nbButton status="primary" type="button"
-                    class="add-task-button">
-                    <nb-icon icon="plus-outline"></nb-icon>Nova Tarefa
-                </button>
-            </div>
+      <div class="flex-container">
+        <div class="custom-search">
+          <input type="text" nbInput fullWidth placeholder="Pesquisar tarefas..." (input)="searchTasks($event)">
         </div>
+
+        <div class="right-actions">
+          <nb-form-field>
+            <nb-icon nbPrefix icon="person-outline"></nb-icon>
+            <nb-select placeholder="Responsável" [(ngModel)]="selectedResponsible" (ngModelChange)="applyFilters()">
+              <nb-option [value]="null">Todos os usuários</nb-option>
+              @for (responsible of taskResponsibles; track responsible.id) {
+                <nb-option [value]="responsible.id">{{ responsible.name }}</nb-option>
+              }
+            </nb-select>
+          </nb-form-field>
+
+          <nb-form-field>
+            <nb-icon nbPrefix icon="funnel-outline"></nb-icon>
+            <nb-select placeholder="Status" [(ngModel)]="selectedStatusFilter" (ngModelChange)="applyFilters()">
+              <nb-option [value]="null">Todas as tarefas</nb-option>
+              <nb-option [value]="0">Pendentes</nb-option>
+              <nb-option [value]="1">Em andamento</nb-option>
+              <nb-option [value]="2">Concluídas</nb-option>
+            </nb-select>
+          </nb-form-field>
+
+          <nb-form-field>
+            <nb-icon nbPrefix icon="options-2-outline"></nb-icon>
+            <nb-select placeholder="Ordenação" [(ngModel)]="selectedSort" (ngModelChange)="applyFilters()">
+              <nb-option [value]="0">Vencimento crescente</nb-option>
+              <nb-option [value]="1">Vencimento decrescente</nb-option>
+            </nb-select>
+          </nb-form-field>
+        </div>
+      </div>
     </nb-card-header>
 
-    <nb-card-body style="padding: 0 !important;">
-        <table id="tasks-table">
-            <tr class="tasks-table-title">
-                <th *ngFor="let column of columns">{{column}}</th>
-            </tr>
-            <tr *ngFor="let task of filteredTasks | paginate: { itemsPerPage: 20, currentPage: p }; index as i;"
-                class="tasks-table-data">
-                <td>{{task?.title}}</td>
-                <td>{{task?.description}}</td>
-                <td>{{task?.registerDate | date:'dd/MM'}}</td>
-                <td>{{task?.expirationDate | date:'dd/MM'}}</td>
-                <td><nb-progress-bar [value]="task?.progress" size="tiny" status="primary"></nb-progress-bar></td>
-                <td class="tags"><nb-tag [text]="getStatusName(task.status)"
-                        [status]="getStatusColor(task.status)"></nb-tag></td>
-                <td>{{task?.responsible?.name}}</td>
-                <td>
-                    <button nbButton (click)="openTaskDialog(addOrUpdateDialog, task)" status="success" type="button"
-                        class="form-btn" ghost>
-                        <nb-icon icon="edit-outline"></nb-icon>
-                    </button>
-                    <button nbButton (click)="openTaskDialog(deleteDialog)" status="danger" type="button"
-                        class="form-btn" ghost>
-                        <nb-icon icon="trash-outline"></nb-icon>
-                    </button>
-                    <ng-template #deleteDialog let-data let-ref="dialogRef">
-                        <nb-card class="confirm-dialog">
-                            <nb-card-header>Confirmação de Exclusão</nb-card-header>
-                            <nb-card-body>
-                                Confirma a exclusão da tarefa "{{task?.title}}"? Essa ação é irreversível.
-                            </nb-card-body>
-                            <nb-card-footer>
-                                <button (click)="ref.close()" nbButton status="danger" type="button">
-                                    Cancelar
-                                </button>
-                                <button (click)="deleteTask(task?.id); ref.close()" nbButton status="success"
-                                    type="button">
-                                    Sim, excluir
-                                </button>
-                            </nb-card-footer>
-                        </nb-card>
-                    </ng-template>
-                </td>
-            </tr>
-        </table>
+    <nb-card-body>
+      <div class="task-list">
+        @for (task of filteredTasks | paginate: { itemsPerPage: 6, currentPage: p }; track task.id) {
+          <article class="task-item" (click)="openTaskView(viewDialog, task)">
+            <div class="task-item__header">
+              <div>
+                <h3>{{ task.title }}</h3>
+                <p>{{ task.description }}</p>
+              </div>
+              <div class="task-item__tags">
+                <nb-tag [text]="getStatusName(task.status)" [status]="getStatusColor(task.status)"></nb-tag>
+                @if (isOverdue(task)) {
+                  <nb-tag text="Atrasada" status="danger"></nb-tag>
+                }
+              </div>
+            </div>
 
-        <ng-template #addOrUpdateDialog let-data let-ref="dialogRef">
-            <nb-card class="add-new-dialog">
-                <nb-card-header>{{editing ? 'Atualizar' : 'Adicionar'}} Tarefa</nb-card-header>
-                <nb-card-body>
-                    <form [formGroup]="tasksForm">
-                        <input type="text" nbInput fullWidth placeholder="Título da Tarefa" formControlName="title">
+            <nb-progress-bar [value]="task.progress ?? 0" size="tiny" status="primary"></nb-progress-bar>
 
-                        <textarea nbInput fullWidth rows="7" placeholder="Descrição da Tarefa"
-                            formControlName="description"></textarea>
+            <div class="task-item__footer">
+              <span>{{ task.expirationDate | date:'dd/MM/yyyy' }}</span>
+              <span>{{ task.responsible?.name || 'Sem responsável' }}</span>
+              <div class="task-item__actions">
+                <button nbButton (click)="openTaskDialog(formDialog, task); $event.stopPropagation()" status="success"
+                  type="button" ghost size="small">
+                  <nb-icon icon="edit-outline"></nb-icon>
+                </button>
+                <button nbButton (click)="openDeleteDialog(deleteDialog, task); $event.stopPropagation()" status="danger"
+                  type="button" ghost size="small">
+                  <nb-icon icon="trash-outline"></nb-icon>
+                </button>
+              </div>
+            </div>
+          </article>
+        } @empty {
+          <div class="empty-state">Nenhuma tarefa encontrada.</div>
+        }
+      </div>
 
-                        <div class="row">
-                            <input nbInput [nbDatepicker]="datepicker" placeholder="Data de Vencimento"
-                                formControlName="expirationDate">
-                            <nb-datepicker #datepicker [min]="minDate" format="dd/MM/yyyy"></nb-datepicker>
-
-                            <nb-select fullWidth placeholder="Status de Tarefa" formControlName="status">
-                                <nb-option [value]="0">Pendente</nb-option>
-                                <nb-option [value]="1">Em andamento</nb-option>
-                                <nb-option [value]="2">Concluída</nb-option>
-                            </nb-select>
-                        </div>
-
-                        <nb-select fullWidth placeholder="Responsável" formControlName="responsibleId">
-                            <nb-option *ngFor="let responsible of taskResponsibles"
-                                [value]="responsible.id">{{responsible.name}}</nb-option>
-                        </nb-select>
-                    </form>
-                </nb-card-body>
-
-                <nb-card-footer>
-                    <button (click)="ref.close(); getTasks();" nbButton status="danger" type="button">
-                        Fechar
-                    </button>
-                    <button [disabled]="tasksForm.invalid" (click)="addOrUpdateTask(); ref.close()" nbButton
-                        status="success" type="button">
-                        {{editing ? 'Atualizar' : 'Adicionar'}}
-                    </button>
-                </nb-card-footer>
-            </nb-card>
-        </ng-template>
+      @if (filteredTasks.length > 6) {
+        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Próxima"></pagination-controls>
+      }
     </nb-card-body>
+  </nb-card>
+</section>
 
-    <pagination-controls (pageChange)="p = $event"></pagination-controls>
-</nb-card>
+<ng-template #viewDialog let-ref="dialogRef">
+  <nb-card class="task-view-dialog">
+    <nb-card-header>
+      <div class="view-header">
+        <h3>{{ choosedTask?.title }}</h3>
+        <nb-tag [text]="getStatusName(choosedTask?.status)" [status]="getStatusColor(choosedTask?.status)"></nb-tag>
+      </div>
+    </nb-card-header>
+    <nb-card-body>
+      <p class="description">{{ choosedTask?.description }}</p>
+      <div class="meta-grid">
+        <div>
+          <span>Responsável</span>
+          <strong>{{ choosedTask?.responsible?.name || '—' }}</strong>
+        </div>
+        <div>
+          <span>Cadastro</span>
+          <strong>{{ choosedTask?.registerDate | date:'dd/MM/yyyy' }}</strong>
+        </div>
+        <div>
+          <span>Vencimento</span>
+          <strong>{{ choosedTask?.expirationDate | date:'dd/MM/yyyy' }}</strong>
+        </div>
+        <div>
+          <span>Progresso</span>
+          <strong>{{ choosedTask?.progress ?? 0 }}%</strong>
+        </div>
+      </div>
+      <nb-progress-bar [value]="choosedTask?.progress ?? 0" status="primary"></nb-progress-bar>
+    </nb-card-body>
+    <nb-card-footer>
+      <button (click)="ref.close()" nbButton status="basic" type="button">Fechar</button>
+      <div class="footer-actions">
+        <button (click)="ref.close(); openDeleteDialog(deleteDialog, choosedTask!)" nbButton status="danger" ghost type="button">
+          Excluir
+        </button>
+        <button (click)="ref.close(); openTaskDialog(formDialog, choosedTask)" nbButton status="primary" type="button">
+          Editar
+        </button>
+      </div>
+    </nb-card-footer>
+  </nb-card>
+</ng-template>
+
+<ng-template #formDialog let-ref="dialogRef">
+  <nb-card class="add-new-dialog">
+    <nb-card-header>{{ editing ? 'Atualizar tarefa' : 'Nova tarefa' }}</nb-card-header>
+    <nb-card-body>
+      <form [formGroup]="tasksForm">
+        <input type="text" nbInput fullWidth placeholder="Título da tarefa" formControlName="title">
+        <textarea nbInput fullWidth rows="5" placeholder="Descrição da tarefa" formControlName="description"></textarea>
+
+        <div class="row">
+          <input nbInput fullWidth [nbDatepicker]="datepicker" placeholder="Data de vencimento" formControlName="expirationDate">
+          <nb-datepicker #datepicker [min]="minDate" format="dd/MM/yyyy"></nb-datepicker>
+
+          <nb-select fullWidth placeholder="Status" formControlName="status">
+            <nb-option [value]="0">Pendente</nb-option>
+            <nb-option [value]="1">Em andamento</nb-option>
+            <nb-option [value]="2">Concluída</nb-option>
+          </nb-select>
+        </div>
+
+        <div class="row">
+          <input type="number" nbInput fullWidth min="0" max="100" placeholder="Progresso (%)" formControlName="progress">
+          <nb-select fullWidth placeholder="Responsável" formControlName="responsibleId">
+            @for (responsible of taskResponsibles; track responsible.id) {
+              <nb-option [value]="responsible.id">{{ responsible.name }}</nb-option>
+            }
+          </nb-select>
+        </div>
+      </form>
+    </nb-card-body>
+    <nb-card-footer>
+      <button (click)="ref.close()" nbButton status="basic" type="button">Cancelar</button>
+      <button [disabled]="tasksForm.invalid" (click)="addOrUpdateTask(); ref.close()" nbButton status="success" type="button">
+        {{ editing ? 'Salvar' : 'Adicionar' }}
+      </button>
+    </nb-card-footer>
+  </nb-card>
+</ng-template>
+
+<ng-template #deleteDialog let-ref="dialogRef">
+  <nb-card class="confirm-dialog">
+    <nb-card-header>Excluir tarefa</nb-card-header>
+    <nb-card-body>
+      Confirma a exclusão de "{{ choosedTask?.title }}"? Essa ação não pode ser desfeita.
+    </nb-card-body>
+    <nb-card-footer>
+      <button (click)="ref.close()" nbButton status="basic" type="button">Cancelar</button>
+      <button (click)="deleteTask(); ref.close()" nbButton status="danger" type="button">Excluir</button>
+    </nb-card-footer>
+  </nb-card>
+</ng-template>

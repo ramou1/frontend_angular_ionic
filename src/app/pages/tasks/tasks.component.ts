@@ -1,198 +1,194 @@
-import { Component, Injector, OnInit, TemplateRef } from '@angular/core';
-import { FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NbButton, NbButtonModule, NbCardModule, NbCheckboxModule, NbDatepickerModule, NbDialogModule, NbDialogService, NbFormFieldModule, NbIconModule, NbInputModule, NbListModule, NbMenuModule, NbProgressBarModule, NbSelectModule, NbSidebarModule, NbTagModule } from '@nebular/theme';
-import { NgxPaginationModule } from 'ngx-pagination';
-import { BasePage } from '../../../services/base-page';
-import { TaskModel } from '../../models/task-model';
 import { CommonModule } from '@angular/common';
+import { Component, effect, Injector, OnInit, TemplateRef } from '@angular/core';
+import { FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  NbButtonModule,
+  NbCardModule,
+  NbDatepickerModule,
+  NbDialogModule,
+  NbFormFieldModule,
+  NbIconModule,
+  NbInputModule,
+  NbProgressBarModule,
+  NbSelectModule,
+  NbTagModule,
+} from '@nebular/theme';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { firstValueFrom } from 'rxjs';
+import { BasePage } from '../../../services/base-page';
 import { MSG_CONST } from '../../constants/message.const';
-import { MOCK_USERS } from '../../constants/mock.const';
-import { MockTaskService } from '../../../services/mock-task.service';
+import { getStatusColor, getStatusName, normalizeText, TASK_STATUS } from '../../constants/task-status';
+import { TaskModel } from '../../models/task-model';
+import { UserModel } from '../../models/user-model';
 
 @Component({
   selector: 'app-tasks',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, NbFormFieldModule, NbInputModule, NbDatepickerModule, NbDialogModule, NbCardModule, NbButtonModule, NbIconModule, NbCheckboxModule, NbListModule, NbMenuModule, NbProgressBarModule, NbTagModule, NbSelectModule, NbSidebarModule, NgxPaginationModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    NbFormFieldModule,
+    NbInputModule,
+    NbDatepickerModule,
+    NbDialogModule,
+    NbCardModule,
+    NbButtonModule,
+    NbIconModule,
+    NbProgressBarModule,
+    NbTagModule,
+    NbSelectModule,
+    NgxPaginationModule,
+  ],
   templateUrl: './tasks.component.html',
   styleUrl: './tasks.component.scss',
-  providers: [NbDialogService],
 })
-
 export class TasksComponent extends BasePage implements OnInit {
-
-  selectedSort: any = null;
-  selectedStatusFilter: any = null;
-  selectedResponsible: any = null;
-  filteredTaskResponsibles: any[] = [];
-  public taskResponsibles: any[] = [];
-  public tasks: TaskModel[] = [];
-  public filteredTasks: any;
-  public tasksForm!: FormGroup;
-  public editing: boolean = false;
-  public choosedTask: any;
-  public loading: boolean = false;
-  public p: number = 1;
-  public minDate: Date | undefined;
-  public sort: string[] = ['', ''];
-
-  columns = ['Título', 'Descrição', 'Data de Registro', 'Data de Vencimento', 'Progresso', 'Status', 'Responsável', 'Ações'];
-  importColumn = ['title', 'description', 'registerDate', 'expirationDate', 'progress', 'status', 'responsible'];
+  selectedSort: number | null = null;
+  selectedStatusFilter: number | null = null;
+  selectedResponsible: string | null = null;
+  searchTerm = '';
+  taskResponsibles: UserModel[] = [];
+  filteredTasks: TaskModel[] = [];
+  tasksForm!: FormGroup;
+  editing = false;
+  choosedTask: TaskModel | null = null;
+  p = 1;
+  minDate: Date = new Date();
 
   constructor(public injector: Injector) {
     super(injector);
+
+    effect(() => {
+      this.taskSrvc.tasks();
+      this.applyFilters();
+    });
   }
 
-  async ngOnInit() {
+  ngOnInit(): void {
     this.createForms();
-    await this.getTasks();
-    await this.getTaskResponsibles();
+    this.taskResponsibles = this.userSrvc.users();
+    this.applyFilters();
   }
 
-  createForms() {
+  createForms(): void {
     this.tasksForm = this.fb.group({
-      id: [],
+      id: [''],
       title: ['', Validators.required],
       description: ['', Validators.required],
       expirationDate: ['', Validators.required],
-      progress: [0, Validators.required],
-      status: ['', Validators.required],
-      responsible: [''],
-      responsibleId: [''],
-      registerDate: null,
-    });
-
-    this.minDate = new Date();
-  }
-
-  getTasks() {
-    this.taskSrvc.getTasks().subscribe({
-      next: (tasks: TaskModel[]) => {
-        this.tasks = tasks;
-        this.filteredTasks = tasks;
-      },
-      error: (err: any) => console.error(err),
+      progress: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+      status: [TASK_STATUS.PENDING, Validators.required],
+      responsibleId: ['', Validators.required],
+      registerDate: [null],
     });
   }
 
-  public async getTaskResponsibles(): Promise<void> {
-    try {
-      this.taskResponsibles = MOCK_USERS;
-    } catch (e) {
-      console.error(e);
-    }
+  searchTasks(event: Event): void {
+    this.searchTerm = (event.target as HTMLInputElement).value;
+    this.p = 1;
+    this.applyFilters();
   }
 
-  // método de pesquisa das tarefas
-  public searchTasks(evt: any): void {
-    const removeAccents = (str: string) => {
-      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    };
+  applyFilters(): void {
+    let list = [...this.taskSrvc.tasks()];
 
-    const searchTerm = removeAccents(evt.target.value);
-
-    if (searchTerm === '') {
-      this.filteredTasks = this.tasks;
-    } else {
-      this.filteredTasks = this.tasks.filter((data: any) => {
-        const titleWithoutAccents = removeAccents(data.title.toLowerCase());
-        return titleWithoutAccents.indexOf(searchTerm.toLowerCase()) > -1;
-      });
+    if (this.searchTerm.trim()) {
+      const term = normalizeText(this.searchTerm);
+      list = list.filter((task) => normalizeText(task.title || '').includes(term));
     }
-  }
 
-  // método de filtragem dos responsáveis pela tarefa
-  public filterResponsibles(): void {
-    if (this.selectedResponsible === null) {
-      this.filteredTasks = this.tasks;
-    } else {
-      this.filteredTasks = this.tasks.filter((task: any) => task.responsibleId === this.selectedResponsible);
+    if (this.selectedResponsible) {
+      list = list.filter((task) => task.responsibleId === this.selectedResponsible);
     }
-  }
 
-  // método de ordenação das tarefas
-  public sortTasks(): void {
+    if (this.selectedStatusFilter !== null) {
+      list = list.filter((task) => task.status === this.selectedStatusFilter);
+    }
+
     if (this.selectedSort === 0) {
-      // ordenar por Data de Vencimento: Crescente
-      this.filteredTasks.sort((a: any, b: any) => new Date(a.expirationDate).getTime() - new Date(b.expirationDate).getTime());
+      list.sort((a, b) => new Date(a.expirationDate || 0).getTime() - new Date(b.expirationDate || 0).getTime());
     } else if (this.selectedSort === 1) {
-      // ordenar por Data de Vencimento: Decrescente
-      this.filteredTasks.sort((a: any, b: any) => new Date(b.expirationDate).getTime() - new Date(a.expirationDate).getTime());
+      list.sort((a, b) => new Date(b.expirationDate || 0).getTime() - new Date(a.expirationDate || 0).getTime());
     }
+
+    this.filteredTasks = list;
   }
 
-  // método de filtragem das tarefas
-  public filterTasks(): void {
-    if (this.selectedStatusFilter === null) {
-      this.filteredTasks = this.tasks;
-    } else if (this.selectedStatusFilter === 0) {
-      // filtrar por Status: Pendente
-      this.filteredTasks = this.tasks.filter((task: any) => task.status === 0);
-    } else if (this.selectedStatusFilter === 1) {
-      // filtrar por Status: Em andamento
-      this.filteredTasks = this.tasks.filter((task: any) => task.status === 1);
-    } else if (this.selectedStatusFilter === 2) {
-      // filtrar por Status: Concluída
-      this.filteredTasks = this.tasks.filter((task: any) => task.status === 2);
+  getStatusName = getStatusName;
+  getStatusColor = getStatusColor;
+
+  isOverdue(task: TaskModel): boolean {
+    if (task.status === TASK_STATUS.DONE || !task.expirationDate) {
+      return false;
     }
+
+    const limit = new Date(task.expirationDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return limit < today;
   }
 
-  // método de formatação do status da tarefa
-  getStatusName(status: number): string {
-    switch (status) {
-      case 0: return 'Pendente';
-      case 1: return 'Em andamento';
-      case 2: return 'Concluída';
-      default: return 'Não iniciado'
-    }
-  }
-
-  getStatusColor(status: number): string {
-    switch (status) {
-      case 0: return 'warning';
-      case 1: return 'info';
-      case 2: return 'success';
-      default: return 'basic'
-    }
-  }
-
-  // método de abertura do diálogo de tarefas
-  openTaskDialog(dialog: TemplateRef<any>, task?: TaskModel) {
-    this.editing = false;
-    this.choosedTask = null;
+  openTaskView(dialog: TemplateRef<unknown>, task: TaskModel): void {
+    this.choosedTask = task;
     this.dialogSrvc.open(dialog);
-    this.tasksForm.reset();
+  }
+
+  openTaskDialog(dialog: TemplateRef<unknown>, task?: TaskModel | null): void {
+    this.editing = !!task;
+    this.choosedTask = task || null;
+    this.tasksForm.reset({
+      progress: 0,
+      status: TASK_STATUS.PENDING,
+    });
 
     if (task) {
-      this.editing = true;
-      this.choosedTask = task;
-      this.tasksForm.patchValue(task);
+      this.tasksForm.patchValue({
+        ...task,
+        expirationDate: task.expirationDate ? new Date(task.expirationDate) : null,
+      });
+    }
+
+    this.dialogSrvc.open(dialog);
+  }
+
+  openDeleteDialog(dialog: TemplateRef<unknown>, task: TaskModel): void {
+    this.choosedTask = task;
+    this.dialogSrvc.open(dialog);
+  }
+
+  async deleteTask(): Promise<void> {
+    if (!this.choosedTask?.id) {
+      return;
+    }
+
+    try {
+      await firstValueFrom(this.taskSrvc.deleteTask(this.choosedTask.id));
+      this.toastrSrvc.success(MSG_CONST.DELETED_TASK_OK, 'Pronto');
+      this.choosedTask = null;
+    } catch (error) {
+      this.toastrSrvc.danger(MSG_CONST.DELETED_TASK_ERROR, 'Erro');
+      console.error(error);
     }
   }
 
-  async deleteTask(taskId: any) {
-    try {
-      await this.taskSrvc.deleteTask(taskId).toPromise();
-      this.filteredTasks = this.filteredTasks.filter((task: TaskModel) => task.id !== taskId);
-      await this.toastrSrvc.success(null, MSG_CONST.DELETED_TASK_OK, { icon: '' });
-    } catch (e) {
-      await this.toastrSrvc.danger(null, MSG_CONST.DELETED_TASK_ERROR, { icon: '' });
-      console.error(e);
+  async addOrUpdateTask(): Promise<void> {
+    if (this.tasksForm.invalid) {
+      this.tasksForm.markAllAsTouched();
+      return;
     }
-  }
 
-  // método de adição ou atualização de tarefas
-  async addOrUpdateTask() {
     try {
-      const formData = this.tasksForm.value;
-      formData.registerDate = new Date();
-      formData.responsible = this.taskResponsibles.find((responsible: any) => responsible.id === formData.responsibleId);
-      await this.taskSrvc.addOrUpdateTask(formData).toPromise();
-      await this.toastrSrvc.success(null, MSG_CONST.SAVE_DATA_OK, { icon: '' });
-      await this.getTasks();
+      const formData = this.tasksForm.getRawValue() as TaskModel;
+      if (this.editing) {
+        formData.registerDate = this.choosedTask?.registerDate;
+      }
+      await firstValueFrom(this.taskSrvc.addOrUpdateTask(formData));
+      this.toastrSrvc.success(MSG_CONST.SAVE_DATA_OK, 'Pronto');
       this.tasksForm.reset();
-    } catch (e) {
-      await this.toastrSrvc.danger(null, MSG_CONST.SAVE_DATA_ERROR, { icon: '' });
-      console.error(e);
+    } catch (error) {
+      this.toastrSrvc.danger(MSG_CONST.SAVE_DATA_ERROR, 'Erro');
+      console.error(error);
     }
   }
 }

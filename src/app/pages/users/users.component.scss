@@ -1,3 +1,89 @@
-nb-card {
-    max-width: 60vw;
+.users-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+
+  h1 {
+    margin-bottom: 4px !important;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.75;
+  }
+}
+
+.user-list {
+  display: grid;
+  gap: 10px;
+}
+
+.user-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--color-primary-transparent-100);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-primary-transparent-200);
+  }
+
+  h3 {
+    margin: 0 0 4px;
+    font-size: 16px !important;
+  }
+
+  p,
+  small {
+    margin: 0;
+    opacity: 0.75;
+    font-size: 13px;
+  }
+}
+
+.user-item__side {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-item__actions {
+  display: flex;
+}
+
+.empty-state {
+  padding: 28px 12px;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.user-view-dialog {
+  width: min(480px, 92vw);
+
+  p {
+    margin: 0 0 10px;
+  }
+}
+
+.footer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 720px) {
+  .panel-heading,
+  .user-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
